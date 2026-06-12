@@ -73,3 +73,49 @@ Shipped the breakout-feature pass and live payment wiring:
 - Rejected all runtime verification placements after testing so they do not enter the public queue.
 
 Readiness change: BuilderPerks can now pitch `one locally matched devtool perk during AI wait time` and can accept a live advertiser checkout.
+
+## 2026-06-12 16:05 ET
+
+Shipped the launch-readiness attribution fix:
+
+- Production deploy id: `6a2c6559d242d7b1b953139d`.
+- GitHub commit: `f63ab5c` (`Add placement attribution to tracked redirects`).
+- Tracked advertiser redirects now append `placementId` and `source` to the destination URL.
+- Verified production redirect:
+  - `seed-neon` -> `https://neon.tech/?placementId=seed-neon&source=prod-smoke`
+  - `seed-railway` -> `https://railway.app/?placementId=seed-railway&source=prod-post-push-smoke`
+- Local API smoke passed for placement creation, admin approval, tracking redirect, claim capture, and placement reporting.
+- Production screenshot: `/Volumes/X10/clawd/shared/status/builderperks-prod-verified-20260612-1606.png`
+- Local screenshot: `/Volumes/X10/clawd/shared/status/builderperks-local-verified-20260612-1604.png`
+
+Live stats after two controlled production tracking checks:
+
+```json
+{
+  "approvedPlacements": 2,
+  "pendingPlacements": 0,
+  "clicks": 6,
+  "claims": 0,
+  "feedback": 2,
+  "builderFeedback": 2,
+  "advertiserFeedback": 0
+}
+```
+
+Gmail reply check:
+
+- Searched authenticated Gmail for replies from `contact@coderabbit.ai`, `cole@helicone.ai`, and `caleb@mendable.ai` newer than 2026-06-12.
+- Result: no matching reply threads.
+- Evidence screenshot: `/Volumes/X10/clawd/shared/status/builderperks-gmail-reply-search-20260612-1607.png`
+
+Ads API decision:
+
+- Do not integrate an ads API yet.
+- Current bottleneck is conversion/acquisition: clicks exist, claims are still `0`, and no advertiser replies are present.
+- Keep the first-customer path manual: targeted outbound, manual advertiser pilots, Stripe Checkout/payment links, manual approval, and tracked redirects.
+- Revisit ads API/auction machinery only after paying advertiser demand or manual operations become a bottleneck.
+
+Mission:
+
+- Durable mission active: `mission-20260612-195820-9f7dab`.
+- Broker tasks: scope in progress with `ruflo_opus_1`; build, verify, review, and closeout are queued behind it.
