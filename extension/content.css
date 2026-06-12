@@ -41,6 +41,16 @@
   margin: 0;
 }
 
+.builderperks-inline .builderperks-why {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 6px;
+  color: #064e3b;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 8px;
+}
+
 .builderperks-inline a {
   background: #0f766e;
   border: 0;

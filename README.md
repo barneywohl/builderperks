@@ -13,7 +13,7 @@ BuilderPerks is looking for first testers. Try it for one AI coding work session
 3. Work normally in Claude, ChatGPT, Cursor, v0, Lovable, Bolt, or another AI build tool.
 4. Open a `Builder beta feedback` issue with the result.
 
-The beta includes builder controls from the first complaint pass: dismiss any card, pause cards for the day, disable cards, and cap daily card appearances.
+The beta includes builder controls from the first complaint pass: dismiss any card, pause cards for the day, disable cards, and cap daily card appearances. Version 0.2.0 also locally matches offers to the page context and shows why a card appeared.
 
 ## Advertiser Pilot CTA
 
@@ -35,7 +35,7 @@ Open an `Advertiser pilot interest` issue or use the live buy form.
 - Builder claim workflow.
 - Click tracking for advertiser reporting.
 - Builder/advertiser feedback capture.
-- Chrome extension that reads the live feed and injects cards near AI wait-state text.
+- Chrome extension that reads the live feed, locally matches offers to AI build context, and injects cards near wait-state text.
 
 ## KISS Scope
 

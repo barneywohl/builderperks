@@ -104,7 +104,7 @@ Do not mass reply. Reply only when the thread is already about AI coding workflo
 
 Do not launch on Product Hunt/HN until:
 
-- Contextual matcher shipped.
+- Contextual matcher shipped. Done in extension `0.2.0`.
 - Chrome beta ZIP verified.
 - Trust/privacy page live.
 - 10+ written builder feedback notes.

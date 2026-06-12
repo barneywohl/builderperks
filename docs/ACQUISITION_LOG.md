@@ -59,3 +59,17 @@ Implemented the first complaint-driven product hardening pass:
 - Added public trust section explaining one-card, no advertiser scripts, no hidden retargeting posture.
 
 Reason: developer ad complaints cluster around obstruction, tracking creep, and lack of control.
+
+## 2026-06-12 14:10 ET
+
+Shipped the breakout-feature pass and live payment wiring:
+
+- Upgraded the extension beta to `0.2.0`.
+- Added local contextual offer matching so cards are selected against the current AI-build page context instead of random rotation.
+- Added a visible match reason on cards, for example `Matched locally to database work`.
+- Wired live Stripe Checkout for advertiser buy requests.
+- Created the live Stripe webhook for `checkout.session.completed`.
+- Verified the webhook marks a placement `paid`.
+- Rejected all runtime verification placements after testing so they do not enter the public queue.
+
+Readiness change: BuilderPerks can now pitch `one locally matched devtool perk during AI wait time` and can accept a live advertiser checkout.
