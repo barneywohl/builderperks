@@ -23,7 +23,12 @@ export default async (req: Request) => {
       feedback: state.feedback.length,
       builderFeedback: state.feedback.filter((item) => item.role === "builder").length,
       advertiserFeedback: state.feedback.filter((item) => item.role === "advertiser").length,
-      builderSignups: state.builders.length
+      builderSignups: state.builders.length,
+      publishers: state.publishers.length,
+      adImpressions: state.impressions.length,
+      estimatedPublisherEarningsUsd: Number(
+        state.impressions.reduce((sum, item) => sum + item.estimatedPublisherEarningsUsd, 0).toFixed(2)
+      )
     }
   });
 };

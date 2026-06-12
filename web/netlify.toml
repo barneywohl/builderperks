@@ -27,6 +27,16 @@
   status = 200
 
 [[redirects]]
+  from = "/api/publishers"
+  to = "/.netlify/functions/publishers"
+  status = 200
+
+[[redirects]]
+  from = "/api/ad-stream"
+  to = "/.netlify/functions/ad-stream"
+  status = 200
+
+[[redirects]]
   from = "/api/stats"
   to = "/.netlify/functions/stats"
   status = 200

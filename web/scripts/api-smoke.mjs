@@ -86,4 +86,24 @@ assert.ok(placement);
 assert.equal(placement.clickCount, 1);
 assert.equal(placement.claimCount, 1);
 
+const publisher = await request("/api/publishers", {
+  method: "POST",
+  body: JSON.stringify({
+    name: "Smoke Terminal",
+    email: "publisher-smoke@example.com",
+    surface: "terminal",
+    payoutHandle: "publisher-smoke@example.com"
+  })
+});
+assert.equal(publisher.response.status, 201);
+assert.equal(publisher.data.ok, true);
+assert.equal(publisher.data.publisher.status, "active");
+
+const streamed = await request(`/api/ad-stream?publisherId=${encodeURIComponent(publisher.data.publisher.id)}&surface=terminal&context=deploying%20an%20AI%20app`);
+assert.equal(streamed.response.status, 200);
+assert.equal(streamed.data.ok, true);
+assert.ok(streamed.data.ad);
+assert.ok(streamed.data.ad.clickUrl.includes("/api/track"));
+assert.equal(streamed.data.revenueShare.payoutStatus, "estimated_unpaid");
+
 console.log(`api smoke ok: ${placementId} approved, tracked, claimed, and reported`);

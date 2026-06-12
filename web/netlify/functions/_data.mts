@@ -52,6 +52,16 @@ export type BuilderSignup = {
   note: string;
 };
 
+export type Publisher = {
+  id: string;
+  createdAt: string;
+  email: string;
+  name: string;
+  surface: string;
+  payoutHandle: string;
+  status: "pending" | "active";
+};
+
 export type Click = {
   id: string;
   createdAt: string;
@@ -60,12 +70,24 @@ export type Click = {
   destination: string;
 };
 
+export type Impression = {
+  id: string;
+  createdAt: string;
+  placementId: string;
+  publisherId: string;
+  surface: string;
+  context: string;
+  estimatedPublisherEarningsUsd: number;
+};
+
 type State = {
   placements: Placement[];
   claims: Claim[];
   feedback: Feedback[];
   clicks: Click[];
   builders: BuilderSignup[];
+  publishers: Publisher[];
+  impressions: Impression[];
 };
 
 const initialState: State = {
@@ -110,7 +132,9 @@ const initialState: State = {
   claims: [],
   feedback: [],
   clicks: [],
-  builders: []
+  builders: [],
+  publishers: [],
+  impressions: []
 };
 
 const storeName = "builderperks-state";
@@ -132,7 +156,13 @@ function stateStore() {
 
 export async function readState(): Promise<State> {
   const stored = await stateStore().get("state", { type: "json" });
-  return { ...initialState, ...(stored ?? {}), builders: (stored as Partial<State> | null)?.builders ?? [] };
+  return {
+    ...initialState,
+    ...(stored ?? {}),
+    builders: (stored as Partial<State> | null)?.builders ?? [],
+    publishers: (stored as Partial<State> | null)?.publishers ?? [],
+    impressions: (stored as Partial<State> | null)?.impressions ?? []
+  };
 }
 
 export async function writeState(state: State) {

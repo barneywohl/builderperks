@@ -415,6 +415,14 @@ code {
   padding: 2px 5px;
 }
 
+.code-sample {
+  background: #111827;
+  border-radius: 8px;
+  color: #d1fae5;
+  overflow-x: auto;
+  padding: 14px;
+}
+
 @media (max-width: 860px) {
   .topbar,
   .topbar nav {

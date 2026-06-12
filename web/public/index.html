@@ -15,6 +15,7 @@
       <nav>
         <a href="#advertiser">Buy placement</a>
         <a href="#builders">Founding builders</a>
+        <a href="#api">Ad API</a>
         <a href="#feed">Live feed</a>
         <a href="#trust">Trust</a>
         <a href="#feedback">Feedback</a>
@@ -53,8 +54,8 @@
         <div class="launch-metrics">
           <div><strong>10</strong><span>builder testers</span></div>
           <div><strong id="builder-signup-count">0</strong><span>founding builders</span></div>
+          <div><strong id="publisher-count">0</strong><span>publisher surfaces</span></div>
           <div><strong>$250</strong><span>48-hour pilot</span></div>
-          <div><strong>1</strong><span>work session ask</span></div>
         </div>
       </section>
 
@@ -68,6 +69,7 @@
           <div><strong>0</strong><span>clicks</span></div>
           <div><strong>0</strong><span>claims</span></div>
           <div><strong>0</strong><span>founding builders</span></div>
+          <div><strong>0</strong><span>ad impressions</span></div>
           <div><strong>0</strong><span>feedback notes</span></div>
         </div>
       </section>
@@ -172,6 +174,38 @@
           </label>
           <button class="button primary wide" type="submit">Join founding builder pool</button>
           <p id="builder-status" class="status wide" role="status"></p>
+        </form>
+      </section>
+
+      <section id="api" class="band two-column">
+        <div>
+          <p class="eyebrow">Supply-side API</p>
+          <h2>Stream a sponsored card into a terminal, IDE, extension, or agent UI.</h2>
+          <p>
+            Founding publishers can register a surface, call one endpoint, and receive a labeled sponsored offer
+            with a tracked click URL. Earnings are estimated until advertiser revenue and payout rails are approved.
+          </p>
+          <pre class="code-sample"><code>GET /api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app</code></pre>
+        </div>
+        <form id="publisher-form" class="form-grid wide-panel">
+          <label>
+            Publisher / product
+            <input name="name" required placeholder="My CLI, IDE plugin, agent runner" />
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" required placeholder="founder@example.com" />
+          </label>
+          <label>
+            Surface
+            <input name="surface" placeholder="terminal, IDE, extension, dashboard" />
+          </label>
+          <label>
+            Payout handle
+            <input name="payoutHandle" placeholder="Stripe email or manual invoice contact" />
+          </label>
+          <button class="button primary wide" type="submit">Register publisher surface</button>
+          <p id="publisher-status" class="status wide" role="status"></p>
         </form>
       </section>
 

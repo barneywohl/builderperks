@@ -2,6 +2,7 @@ const api = {
   placements: "/api/placements",
   claims: "/api/claims",
   builders: "/api/builders",
+  publishers: "/api/publishers",
   feedback: "/api/feedback",
   stats: "/api/stats",
   track: "/api/track",
@@ -116,10 +117,13 @@ async function loadStats() {
     <div><strong>${escapeHtml(stats.clicks)}</strong><span>clicks</span></div>
     <div><strong>${escapeHtml(stats.claims)}</strong><span>claims</span></div>
     <div><strong>${escapeHtml(stats.builderSignups ?? 0)}</strong><span>founding builders</span></div>
+    <div><strong>${escapeHtml(stats.adImpressions ?? 0)}</strong><span>ad impressions</span></div>
     <div><strong>${escapeHtml(stats.feedback)}</strong><span>feedback notes</span></div>
   `;
   const builderCount = document.getElementById("builder-signup-count");
   if (builderCount) builderCount.textContent = String(stats.builderSignups ?? 0);
+  const publisherCount = document.getElementById("publisher-count");
+  if (publisherCount) publisherCount.textContent = String(stats.publishers ?? 0);
 }
 
 async function submitPlacement(event) {
@@ -180,6 +184,26 @@ async function submitBuilder(event) {
   }
 }
 
+async function submitPublisher(event) {
+  event.preventDefault();
+  const status = document.getElementById("publisher-status");
+  status.textContent = "Registering...";
+
+  try {
+    const data = await request(api.publishers, {
+      method: "POST",
+      body: JSON.stringify(formData(event.currentTarget))
+    });
+    status.innerHTML = data.alreadyJoined
+      ? `Already registered. Publisher id: <code>${escapeHtml(data.publisher.id)}</code>`
+      : `Registered. Publisher id: <code>${escapeHtml(data.publisher.id)}</code>. Use it with <code>/api/ad-stream</code>.`;
+    event.currentTarget.reset();
+    await loadStats();
+  } catch (error) {
+    status.textContent = error.message;
+  }
+}
+
 async function loadAdmin() {
   const key = document.getElementById("admin-key").value.trim();
   const list = document.getElementById("admin-list");
@@ -225,6 +249,7 @@ async function loadAdmin() {
 
 document.getElementById("placement-form").addEventListener("submit", submitPlacement);
 document.getElementById("builder-form").addEventListener("submit", submitBuilder);
+document.getElementById("publisher-form").addEventListener("submit", submitPublisher);
 document.getElementById("feedback-form").addEventListener("submit", submitFeedback);
 document.getElementById("load-admin").addEventListener("click", loadAdmin);
 
