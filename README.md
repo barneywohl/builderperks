@@ -75,7 +75,9 @@ Then configure a Stripe webhook for `checkout.session.completed` pointing at `/a
 Paid sessions are marked `paid`; approval is still manual so bad offers cannot go live automatically.
 Without Stripe credentials or checkout URLs, buy requests are stored as invoice/manual approval requests.
 
-Jake/company must create or own the Stripe account because Stripe needs business, tax, ownership, and bank details. Once the live Payment Links or API keys exist, BuilderPerks only needs the checkout URLs above to accept paid placement requests.
+Jake/company must create or own the Stripe account because Stripe needs business, tax, ownership, and bank details. Once the live API keys exist, BuilderPerks can accept paid placement requests.
+
+Stripe Connect is intentionally not in the first paid-pilot path because BuilderPerks is currently charging advertisers directly, not onboarding third-party merchants or paying out publishers. See `docs/STRIPE_CONNECT_DECISION.md`.
 
 ## Extension
 
