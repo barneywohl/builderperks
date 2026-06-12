@@ -7,7 +7,10 @@ export default async (req: Request) => {
   }
 
   const state = await readState();
-  const approvedPlacements = state.placements.filter((placement) => placement.status === "approved").length;
+  const approvedPlacementIds = new Set(
+    state.placements.filter((placement) => placement.status === "approved").map((placement) => placement.id)
+  );
+  const approvedPlacements = approvedPlacementIds.size;
   const pendingPlacements = state.placements.filter((placement) => placement.status === "pending").length;
 
   return json({
@@ -15,8 +18,8 @@ export default async (req: Request) => {
     stats: {
       approvedPlacements,
       pendingPlacements,
-      clicks: state.clicks.length,
-      claims: state.claims.length,
+      clicks: state.clicks.filter((click) => approvedPlacementIds.has(click.placementId)).length,
+      claims: state.claims.filter((claim) => approvedPlacementIds.has(claim.placementId)).length,
       feedback: state.feedback.length,
       builderFeedback: state.feedback.filter((item) => item.role === "builder").length,
       advertiserFeedback: state.feedback.filter((item) => item.role === "advertiser").length
