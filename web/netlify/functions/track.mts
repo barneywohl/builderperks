@@ -15,18 +15,22 @@ export default async (req: Request) => {
   const placement = state.placements.find((item) => item.id === placementId && item.status === "approved");
   if (!placement) return badRequest("Placement is not available");
 
+  const destination = new URL(placement.url);
+  destination.searchParams.set("placementId", placementId);
+  destination.searchParams.set("source", source);
+
   const click: Click = {
     id: id("clk"),
     createdAt: new Date().toISOString(),
     placementId,
     source,
-    destination: placement.url
+    destination: destination.toString()
   };
 
   state.clicks.unshift(click);
   await writeState(state);
 
-  return Response.redirect(placement.url, 302);
+  return Response.redirect(destination.toString(), 302);
 };
 
 export const config: Config = {
