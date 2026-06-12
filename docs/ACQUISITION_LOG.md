@@ -243,6 +243,42 @@ Important safety/product line:
 - This records estimated unpaid publisher earnings only.
 - No automatic payouts happen until advertiser revenue exists and payout rails are explicitly approved.
 
+## 2026-06-12 17:15 ET
+
+Netlify upgraded and supply-side ad stream API deployed live.
+
+Production deploy:
+
+- Deploy id: `6a2c76954096c90a4bde26de`
+- URL: `https://builderperks.netlify.app/`
+
+Live verification:
+
+- `GET /api/stats` before API smoke showed:
+  - `publishers: 0`
+  - `adImpressions: 0`
+  - `estimatedPublisherEarningsUsd: 0`
+- `POST /api/publishers` created live smoke publisher:
+  - `pub-mqbfdfwg-76b3d769`
+- `GET /api/ad-stream?publisherId=pub-mqbfdfwg-76b3d769&surface=terminal&context=deploying%20an%20AI%20app`
+  - returned Railway sponsored card
+  - recorded impression `imp-mqbfdgqh-c1e2a008`
+  - returned tracked `clickUrl`
+  - returned estimated unpaid publisher earnings `$0.02`
+- `GET /api/stats` after API smoke showed:
+  - `publishers: 1`
+  - `adImpressions: 1`
+  - `estimatedPublisherEarningsUsd: 0.02`
+
+Evidence:
+
+- `/Volumes/X10/clawd/shared/status/builderperks-ad-stream-prod-20260612-1715.png`
+
+Status:
+
+- The terminal/IDE/product ad-stream API is now live.
+- Real payouts remain disabled/estimated until advertiser revenue and payout rails are approved.
+
 Ad-network reality check:
 
 - Carbon Ads is relevant for developer audiences, but it is a curated network for hand-picked tech/design publishers, not an instant backfill API for a new terminal/IDE ad surface.
