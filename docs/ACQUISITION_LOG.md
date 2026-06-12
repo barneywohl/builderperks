@@ -119,3 +119,39 @@ Mission:
 
 - Durable mission active: `mission-20260612-195820-9f7dab`.
 - Broker tasks: scope in progress with `ruflo_opus_1`; build, verify, review, and closeout are queued behind it.
+
+## 2026-06-12 16:36 ET
+
+First-customer goal set and advertiser acquisition push started.
+
+Goal artifact:
+
+- `docs/FIRST_CUSTOMER_GOAL_20260612.md`
+
+Durable mission:
+
+- `mission-20260612-203219-43ec7a`
+- Goal: close one real advertiser/customer pilot using the shipped product; send targeted outbound; monitor replies; create/approve placement and route checkout if an advertiser commits; do not build an ads API unless demand proves it.
+
+Outbound sent from authenticated Gmail:
+
+| Company | Recipient | Ask | Evidence |
+| --- | --- | --- | --- |
+| Railway | `team@railway.com` | $250 / 48-hour Railway credits pilot | `/Volumes/X10/clawd/shared/status/builderperks-gmail-railway-sent-20260612-1634.png` |
+| Langfuse | `contact@langfuse.com` | $250 / 48-hour Langfuse AI-builder pilot | `/Volumes/X10/clawd/shared/status/builderperks-gmail-langfuse-sent-20260612-1636.png` |
+| CodeRabbit | `sales@coderabbit.ai` | $250 / 48-hour AI code review pilot | `/Volumes/X10/clawd/shared/status/builderperks-gmail-coderabbit-sales-sent-20260612-1636.png` |
+| Helicone | `cole@helicone.ai` | $250 / 48-hour LLM observability pilot follow-up | `/Volumes/X10/clawd/shared/status/builderperks-gmail-helicone-followup-sent-20260612-1636.png` |
+| Firecrawl / Mendable | `caleb@mendable.ai` | $250 / 48-hour scraping/extract API pilot follow-up | `/Volumes/X10/clawd/shared/status/builderperks-gmail-firecrawl-followup-sent-20260612-1636.png` |
+
+Contact source notes:
+
+- Railway sales email from Railway support docs: `https://docs.railway.com/platform/support`
+- Langfuse email from Langfuse imprint: `https://langfuse.com/imprint/imprint`
+- CodeRabbit sales/support email from public CodeRabbit contact/Atlassian listings: `https://coderabbit.ai/contact-us` and `https://marketplace.atlassian.com/vendors/1225092/coderabbit`
+- Helicone and Firecrawl/Mendable recipients came from the existing 2026-06-12 Gmail outreach log.
+
+Next checkpoint:
+
+- Monitor Gmail for replies every 30-60 minutes during the launch window.
+- If any advertiser says yes, immediately create a matching placement, mark it pending/approved depending on content safety, and route them to checkout.
+- If no advertiser replies by next checkpoint, use daily.dev/GitHub/X-authenticated channels for builder-side proof, because claims remain the bottleneck.
