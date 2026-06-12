@@ -14,7 +14,7 @@ function checkoutUrlFor(packageId: keyof typeof packages) {
 
 async function createStripeCheckout(req: Request, placement: Placement) {
   const secret = env("STRIPE_SECRET_KEY");
-  if (!secret) return null;
+  if (!secret) return { checkout: null, error: null };
 
   const origin = siteUrl(req);
   const params = new URLSearchParams();
@@ -44,9 +44,9 @@ async function createStripeCheckout(req: Request, placement: Placement) {
   const data = await response.json();
   if (!response.ok) {
     console.error("stripe_checkout_failed", data);
-    return null;
+    return { checkout: null, error: "Stripe checkout is unavailable. Placement saved for invoice follow-up." };
   }
-  return { id: data.id as string, url: data.url as string };
+  return { checkout: { id: data.id as string, url: data.url as string }, error: null };
 }
 
 export default async (req: Request) => {
@@ -94,15 +94,20 @@ export default async (req: Request) => {
     packageId,
     budgetUsd: packages[packageId],
     targetTools: Array.isArray(body.targetTools) ? body.targetTools.map((tool: unknown) => cleanText(tool)).filter(Boolean).slice(0, 5) : ["Claude", "ChatGPT"],
-    paymentStatus: staticCheckoutUrl || env("STRIPE_SECRET_KEY") ? "checkout_ready" : "invoice_requested"
+    paymentStatus: staticCheckoutUrl ? "checkout_ready" : "invoice_requested"
   };
 
   if (!placement.company || !placement.email || !placement.headline || !placement.body || !placement.url) {
     return badRequest("Company, email, headline, body, and URL are required");
   }
 
-  const stripeCheckout = await createStripeCheckout(req, placement);
-  if (stripeCheckout) placement.checkoutSessionId = stripeCheckout.id;
+  const { checkout: stripeCheckout, error: checkoutError } = staticCheckoutUrl
+    ? { checkout: null, error: null }
+    : await createStripeCheckout(req, placement);
+  if (stripeCheckout) {
+    placement.checkoutSessionId = stripeCheckout.id;
+    placement.paymentStatus = "checkout_ready";
+  }
 
   state.placements.unshift(placement);
   await writeState(state);
@@ -111,7 +116,8 @@ export default async (req: Request) => {
     ok: true,
     placement,
     checkoutUrl: stripeCheckout?.url || staticCheckoutUrl,
-    nextStep: placement.paymentStatus === "checkout_ready" ? "checkout" : "invoice"
+    nextStep: placement.paymentStatus === "checkout_ready" ? "checkout" : "invoice",
+    checkoutError
   }, { status: 201 });
 };
 

@@ -14,6 +14,8 @@ assert.match(js, /submitFeedback/);
 assert.match(js, /escapeHtml/);
 assert.match(js, /trackUrl/);
 assert.match(js, /loadStats/);
+assert.match(await readFile("netlify/functions/placements.mts", "utf8"), /paymentStatus = "checkout_ready"/);
+assert.match(await readFile("netlify/functions/placements.mts", "utf8"), /checkoutError/);
 assert.match(css, /placement-card/);
 assert.match(css, /impact-meter/);
 assert.match(css, /score-grid/);
