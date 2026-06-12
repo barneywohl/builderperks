@@ -62,7 +62,10 @@ const tracked = await fetch(`${baseUrl}/api/track?placementId=${encodeURICompone
   redirect: "manual"
 });
 assert.equal(tracked.status, 302);
-assert.equal(tracked.headers.get("location"), "https://example.com/builderperks-smoke");
+const redirectUrl = new URL(tracked.headers.get("location"));
+assert.equal(redirectUrl.origin + redirectUrl.pathname, "https://example.com/builderperks-smoke");
+assert.equal(redirectUrl.searchParams.get("placementId"), placementId);
+assert.equal(redirectUrl.searchParams.get("source"), "api-smoke");
 
 const claimed = await request("/api/claims", {
   method: "POST",
