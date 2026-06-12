@@ -295,3 +295,36 @@ Conclusion:
 - Do not rely on generic ad-network backfill as the first step.
 - The correct first product primitive is our own supply-side API (`/api/publishers`, `/api/ad-stream`) with estimated unpaid earnings.
 - Once we have real publisher surfaces and clean usage, approach Carbon/EthicalAds/BuySellAds as a partner or advertiser-demand source rather than assuming instant API monetization.
+
+## 2026-06-12 18:25 ET
+
+Ads integration access requests sent after live supply-side API deployment.
+
+Context:
+
+- Jake explicitly asked to pursue external ad API/access so BuilderPerks can backfill developer inventory until direct advertisers buy placements.
+- The live BuilderPerks API is already able to register publisher surfaces and serve labeled sponsored cards with tracked impressions/clicks.
+- Real payouts remain disabled; current publisher earnings are estimated/unpaid until advertiser revenue and payout rails are approved.
+
+Outbound requests:
+
+| Partner | Contact | Ask | Evidence |
+| --- | --- | --- | --- |
+| BuySellAds | `support@buysellads.com` | Ad Serving API access, Carbon publisher review, or pilot partnership for developer-native terminal/IDE inventory. | `/Volumes/X10/clawd/shared/status/builderperks-ads-api-bsa-api-access-sent-20260612-1825.png` |
+| Carbon Ads | `support@carbonads.net` | Carbon publisher/API pilot for terminal and IDE developer inventory. | `/Volumes/X10/clawd/shared/status/builderperks-ads-api-carbon-publisher-access-sent-20260612-1825.png` |
+| EthicalAds | `ads@ethicalads.io` | Publisher/API fit for privacy-conscious terminal and IDE developer inventory. | `/Volumes/X10/clawd/shared/status/builderperks-ads-api-ethicalads-access-sent-20260612-1825.png` |
+| AdButler | `hello@adbutler.com` | API/trial access for native ad-server infrastructure and reporting. | `/Volumes/X10/clawd/shared/status/builderperks-ads-api-adbutler-api-access-sent-20260612-1825.png` |
+| Kevel | `support@kevel.com` | API access or pilot/trial for native ad decisioning, campaign management, and reporting. | `/Volumes/X10/clawd/shared/status/builderperks-ads-api-kevel-api-access-sent-20260612-1825.png` |
+
+Status:
+
+- External ad backfill/API access is now in motion.
+- BuilderPerks should keep using its own direct placement feed until one of these partners approves access or provides a compliant pilot path.
+- Avoid positioning this as paying users for ad clicks/views. The safe positioning is publisher revenue share from compliant sponsored placements.
+
+Next:
+
+- Monitor Gmail replies from BuySellAds, Carbon, EthicalAds, AdButler, and Kevel.
+- If BuySellAds/Carbon or EthicalAds accepts, wire their API/placement approval path into `/api/ad-stream`.
+- If AdButler or Kevel responds first, use them as campaign/ad-server infrastructure while continuing direct advertiser sales.
+- Continue recruiting publisher surfaces so the partner replies have real inventory proof behind them.
