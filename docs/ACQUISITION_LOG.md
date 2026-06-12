@@ -201,3 +201,44 @@ Fallback while blocked:
 - Continue advertiser outreach with the existing live product.
 - Use the existing feedback form/GitHub issue flow for builder proof until `/api/builders` can deploy.
 - Once Netlify credits are fixed, redeploy commit `4302d80`.
+
+## 2026-06-12 17:07 ET
+
+Clarified founder requirement: build an API that lets terminal/IDE/product surfaces run BuilderPerks ads so the supply side can onboard first, accrue estimated earnings, and create a stronger advertiser story.
+
+Built locally and pushed:
+
+- `/api/publishers`
+  - Registers a publisher/integration surface.
+  - Returns publisher id and tracks active publisher surfaces.
+- `/api/ad-stream`
+  - Accepts `publisherId`, `surface`, and `context`.
+  - Selects an approved placement.
+  - Records an impression.
+  - Returns a labeled sponsored card plus tracked `clickUrl`.
+  - Returns estimated unpaid publisher earnings.
+- `/api/stats`
+  - Now includes `publishers`, `adImpressions`, and `estimatedPublisherEarningsUsd`.
+- Live-page source now includes an `Ad API` section with publisher registration form and example terminal/IDE request.
+
+Verification:
+
+- `npm run build` passed.
+- `npm run check` passed.
+- `npm run smoke` passed.
+- `npm run smoke:api` passed, including publisher registration and ad-stream delivery.
+- Local browser evidence: `/Volumes/X10/clawd/shared/status/builderperks-ad-stream-local-20260612-1706.png`
+
+Commit:
+
+- `e7327f1` (`Add supply side ad stream API`)
+
+Production deploy status:
+
+- Still blocked by Netlify account credit usage exceeded.
+- Code is pushed and ready; production cannot receive the new API until Netlify credits/billing are fixed.
+
+Important safety/product line:
+
+- This records estimated unpaid publisher earnings only.
+- No automatic payouts happen until advertiser revenue exists and payout rails are explicitly approved.
