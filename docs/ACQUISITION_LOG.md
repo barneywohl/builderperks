@@ -174,3 +174,30 @@ Reason:
 
 - Advertisers need to see supply, but the earliest believable supply is real opted-in builder testers and claim intent, not an API or payout ledger.
 - The existing `/api/placements`, `/api/track`, `/api/claims`, `/api/feedback`, and `/api/stats` endpoints are enough for the first paid pilot.
+
+## 2026-06-12 17:02 ET
+
+Built the next lightweight supply-onboarding layer:
+
+- Added `/api/builders` Netlify function for founding-builder signups.
+- Added `builderSignups` to `/api/stats`.
+- Added founding-builder signup form to the live-page source.
+- Local verification passed:
+  - `npm run build`
+  - `npm run check`
+  - `npm run smoke`
+  - local `POST /api/builders`
+  - local `GET /api/stats` showing `builderSignups`
+- Commit: `4302d80` (`Add founding builder signup API`)
+
+Production deploy blocker:
+
+- Netlify deploy `6a2c73667730e19707080cb1` failed before build execution.
+- Netlify error: `Skipped due to account credit usage exceeded`.
+- Current production remains on the prior working deploy until Netlify account credits/billing are fixed.
+
+Fallback while blocked:
+
+- Continue advertiser outreach with the existing live product.
+- Use the existing feedback form/GitHub issue flow for builder proof until `/api/builders` can deploy.
+- Once Netlify credits are fixed, redeploy commit `4302d80`.
