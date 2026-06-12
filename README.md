@@ -79,6 +79,8 @@ Jake/company must create or own the Stripe account because Stripe needs business
 
 Stripe Connect is intentionally not in the first paid-pilot path because BuilderPerks is currently charging advertisers directly, not onboarding third-party merchants or paying out publishers. See `docs/STRIPE_CONNECT_DECISION.md`.
 
+Stripe development/security checklist: `docs/STRIPE_DEVELOPMENT_CHECKLIST.md`.
+
 ## Extension
 
 Load `projects/builderperks/extension` as an unpacked Chrome extension, then set the deployed API URL in the popup.
