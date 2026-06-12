@@ -242,3 +242,20 @@ Important safety/product line:
 
 - This records estimated unpaid publisher earnings only.
 - No automatic payouts happen until advertiser revenue exists and payout rails are explicitly approved.
+
+Ad-network reality check:
+
+- Carbon Ads is relevant for developer audiences, but it is a curated network for hand-picked tech/design publishers, not an instant backfill API for a new terminal/IDE ad surface.
+  - Source: `https://www.carbonads.net/`
+  - Publisher criteria include relevance, monthly page views, active maintenance, current network capacity, and compliance with placement/exclusivity requirements: `https://www.carbonads.net/faq`
+- EthicalAds is also developer-focused, but publishers apply and it explicitly seeks developer-focused sites with substantial traffic.
+  - Source: `https://www.ethicalads.io/publisher-guide/`
+  - Their client docs say you need to become a publisher before configuring a site: `https://ethical-ad-client.readthedocs.io/`
+- Google AdSense-style monetization is unsafe for this exact idea if framed as paying users to view/click ads. Google’s policy prohibits compensating users for viewing ads or performing searches except for specific rewarded inventory contexts.
+  - Source: `https://support.google.com/adsense/answer/48182`
+
+Conclusion:
+
+- Do not rely on generic ad-network backfill as the first step.
+- The correct first product primitive is our own supply-side API (`/api/publishers`, `/api/ad-stream`) with estimated unpaid earnings.
+- Once we have real publisher surfaces and clean usage, approach Carbon/EthicalAds/BuySellAds as a partner or advertiser-demand source rather than assuming instant API monetization.
