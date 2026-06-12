@@ -155,3 +155,22 @@ Next checkpoint:
 - Monitor Gmail for replies every 30-60 minutes during the launch window.
 - If any advertiser says yes, immediately create a matching placement, mark it pending/approved depending on content safety, and route them to checkout.
 - If no advertiser replies by next checkpoint, use daily.dev/GitHub/X-authenticated channels for builder-side proof, because claims remain the bottleneck.
+
+## 2026-06-12 16:50 ET
+
+Decision on API / paying users for ads:
+
+- Do not build or connect a full ads API yet.
+- Do not pay users for fake ad views or forced clicks; that would create low-quality traffic and weaken advertiser trust.
+- Do add lightweight supply proof now: a public `Founding builders` section that recruits real AI-heavy builders and explains future revenue share only after real advertiser dollars exist.
+
+Shipped product change:
+
+- Added `#builders` section to the live page.
+- Copy explicitly says: real builders, no paid fake clicks, revenue share only after advertiser revenue, and advertisers see clicks/claims/feedback.
+- Commit: `c40c34c` (`Add founding builder supply proof section`)
+
+Reason:
+
+- Advertisers need to see supply, but the earliest believable supply is real opted-in builder testers and claim intent, not an API or payout ledger.
+- The existing `/api/placements`, `/api/track`, `/api/claims`, `/api/feedback`, and `/api/stats` endpoints are enough for the first paid pilot.
