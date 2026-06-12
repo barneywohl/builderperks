@@ -13,6 +13,8 @@ Try BuilderPerks for one AI coding work session:
 3. Work normally in Claude, ChatGPT, Cursor, v0, Lovable, or Bolt.
 4. Leave a `Builder beta feedback` issue with one honest reaction: useful, neutral, or annoying.
 
+The current beta is intentionally conservative: one card at a time, daily cap, dismiss button, pause-for-today control, and no advertiser scripts.
+
 ## Advertiser CTA
 
 Devtool advertisers can open an `Advertiser pilot interest` issue or use the live buy form:

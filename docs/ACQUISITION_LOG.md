@@ -47,3 +47,15 @@ Sent from `barneywohl@gmail.com` via authenticated Gmail browser session.
 - Recheck product stats for new clicks, claims, and feedback.
 - If X post gets impressions but no conversion, reply only to highly relevant AI-builder posts with the GitHub issue as the CTA.
 - If advertiser replies arrive, create a mock placement and route payment through the live buy form or Stripe link once configured.
+
+## 2026-06-12 12:35 ET
+
+Implemented the first complaint-driven product hardening pass:
+
+- Added extension dismiss button.
+- Added pause-for-today control.
+- Added persistent enable/disable setting.
+- Added daily card cap, defaulting to 3.
+- Added public trust section explaining one-card, no advertiser scripts, no hidden retargeting posture.
+
+Reason: developer ad complaints cluster around obstruction, tracking creep, and lack of control.

@@ -14,6 +14,14 @@
   z-index: 2147483647;
 }
 
+.builderperks-controls {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+}
+
 .builderperks-inline small {
   color: #064e3b;
   font-size: 12px;
@@ -33,8 +41,7 @@
   margin: 0;
 }
 
-.builderperks-inline a,
-.builderperks-inline button {
+.builderperks-inline a {
   background: #0f766e;
   border: 0;
   border-radius: 8px;
@@ -45,4 +52,21 @@
   padding: 9px 10px;
   text-align: center;
   text-decoration: none;
+}
+
+.builderperks-inline button {
+  background: transparent;
+  border: 1px solid #d8d2c4;
+  border-radius: 999px;
+  color: #65625a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 8px;
+}
+
+.builderperks-inline button:hover {
+  border-color: #0f766e;
+  color: #064e3b;
 }

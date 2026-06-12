@@ -32,6 +32,25 @@ form {
   gap: 8px;
 }
 
+.settings {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid #d8d2c4;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.check-row {
+  align-items: center;
+  display: flex;
+}
+
+.check-row input {
+  min-height: auto;
+  width: auto;
+}
+
 input,
 textarea,
 button {

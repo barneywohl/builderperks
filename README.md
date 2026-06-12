@@ -13,6 +13,8 @@ BuilderPerks is looking for first testers. Try it for one AI coding work session
 3. Work normally in Claude, ChatGPT, Cursor, v0, Lovable, Bolt, or another AI build tool.
 4. Open a `Builder beta feedback` issue with the result.
 
+The beta includes builder controls from the first complaint pass: dismiss any card, pause cards for the day, disable cards, and cap daily card appearances.
+
 ## Advertiser Pilot CTA
 
 Devtool companies can test a manually approved launch placement:
