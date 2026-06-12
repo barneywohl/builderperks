@@ -157,14 +157,16 @@ This gives builders a non-ad reason to keep the extension.
 
 ## Next Build Slice
 
-Build `categories + local matcher + Need this / Not relevant` first.
+Build `Build Moment Reports + Need this / Not relevant / Hide category` first.
 
 Acceptance:
 
-- Admin can approve placements with categories.
-- Extension shows a card only when context matches.
-- Builder can mark Need this or Not relevant.
-- `/api/stats` includes matched moments and relevance feedback.
-- Site explains "contextual build help" instead of generic ad inventory.
+- Extension tracks `Need this`, `Not relevant`, and `Hide category` actions.
+- Events include placement id, source, match reason, and timestamp.
+- `/api/stats` includes matched/relevance feedback.
+- Admin view shows per-placement relevance signals.
+- A simple report can be sent to an advertiser after a 48-hour pilot.
 
 This is the fastest path to making BuilderPerks meaningfully different from Carbon, EthicalAds, and daily.dev.
+
+See also: `docs/BREAKOUT_FEATURE_REVIEW_20260612.md`.
