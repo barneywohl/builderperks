@@ -1,6 +1,7 @@
 const api = {
   placements: "/api/placements",
   claims: "/api/claims",
+  builders: "/api/builders",
   feedback: "/api/feedback",
   stats: "/api/stats",
   track: "/api/track",
@@ -114,8 +115,11 @@ async function loadStats() {
     <div><strong>${escapeHtml(stats.approvedPlacements)}</strong><span>approved placements</span></div>
     <div><strong>${escapeHtml(stats.clicks)}</strong><span>clicks</span></div>
     <div><strong>${escapeHtml(stats.claims)}</strong><span>claims</span></div>
+    <div><strong>${escapeHtml(stats.builderSignups ?? 0)}</strong><span>founding builders</span></div>
     <div><strong>${escapeHtml(stats.feedback)}</strong><span>feedback notes</span></div>
   `;
+  const builderCount = document.getElementById("builder-signup-count");
+  if (builderCount) builderCount.textContent = String(stats.builderSignups ?? 0);
 }
 
 async function submitPlacement(event) {
@@ -153,6 +157,24 @@ async function submitFeedback(event) {
     });
     status.textContent = "Feedback recorded.";
     event.currentTarget.reset();
+  } catch (error) {
+    status.textContent = error.message;
+  }
+}
+
+async function submitBuilder(event) {
+  event.preventDefault();
+  const status = document.getElementById("builder-status");
+  status.textContent = "Joining...";
+
+  try {
+    const data = await request(api.builders, {
+      method: "POST",
+      body: JSON.stringify(formData(event.currentTarget))
+    });
+    status.textContent = data.alreadyJoined ? "Already in the founding builder pool." : "Joined. We will use this as real supply proof for advertisers.";
+    event.currentTarget.reset();
+    await loadStats();
   } catch (error) {
     status.textContent = error.message;
   }
@@ -202,6 +224,7 @@ async function loadAdmin() {
 }
 
 document.getElementById("placement-form").addEventListener("submit", submitPlacement);
+document.getElementById("builder-form").addEventListener("submit", submitBuilder);
 document.getElementById("feedback-form").addEventListener("submit", submitFeedback);
 document.getElementById("load-admin").addEventListener("click", loadAdmin);
 

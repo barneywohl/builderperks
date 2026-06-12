@@ -42,6 +42,16 @@ export type Feedback = {
   message: string;
 };
 
+export type BuilderSignup = {
+  id: string;
+  createdAt: string;
+  email: string;
+  name: string;
+  tool: string;
+  audience: string;
+  note: string;
+};
+
 export type Click = {
   id: string;
   createdAt: string;
@@ -55,6 +65,7 @@ type State = {
   claims: Claim[];
   feedback: Feedback[];
   clicks: Click[];
+  builders: BuilderSignup[];
 };
 
 const initialState: State = {
@@ -98,7 +109,8 @@ const initialState: State = {
   ],
   claims: [],
   feedback: [],
-  clicks: []
+  clicks: [],
+  builders: []
 };
 
 const storeName = "builderperks-state";
@@ -120,7 +132,7 @@ function stateStore() {
 
 export async function readState(): Promise<State> {
   const stored = await stateStore().get("state", { type: "json" });
-  return { ...initialState, ...(stored ?? {}) };
+  return { ...initialState, ...(stored ?? {}), builders: (stored as Partial<State> | null)?.builders ?? [] };
 }
 
 export async function writeState(state: State) {

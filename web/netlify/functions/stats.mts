@@ -22,7 +22,8 @@ export default async (req: Request) => {
       claims: state.claims.filter((claim) => approvedPlacementIds.has(claim.placementId)).length,
       feedback: state.feedback.length,
       builderFeedback: state.feedback.filter((item) => item.role === "builder").length,
-      advertiserFeedback: state.feedback.filter((item) => item.role === "advertiser").length
+      advertiserFeedback: state.feedback.filter((item) => item.role === "advertiser").length,
+      builderSignups: state.builders.length
     }
   });
 };

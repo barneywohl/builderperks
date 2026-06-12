@@ -52,6 +52,7 @@
         </div>
         <div class="launch-metrics">
           <div><strong>10</strong><span>builder testers</span></div>
+          <div><strong id="builder-signup-count">0</strong><span>founding builders</span></div>
           <div><strong>$250</strong><span>48-hour pilot</span></div>
           <div><strong>1</strong><span>work session ask</span></div>
         </div>
@@ -66,6 +67,7 @@
           <div><strong>0</strong><span>approved placements</span></div>
           <div><strong>0</strong><span>clicks</span></div>
           <div><strong>0</strong><span>claims</span></div>
+          <div><strong>0</strong><span>founding builders</span></div>
           <div><strong>0</strong><span>feedback notes</span></div>
         </div>
       </section>
@@ -147,6 +149,30 @@
           <div>Revenue share only after real advertiser dollars exist</div>
           <div>Advertisers see clicks, claims, and written feedback</div>
         </div>
+        <form id="builder-form" class="form-grid wide-panel">
+          <label>
+            Name
+            <input name="name" placeholder="Jane Builder" />
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" required placeholder="jane@example.com" />
+          </label>
+          <label>
+            Main AI tool
+            <input name="tool" placeholder="Claude Code, Cursor, ChatGPT, v0" />
+          </label>
+          <label>
+            Builder type
+            <input name="audience" placeholder="AI app builder, agency, indie hacker" />
+          </label>
+          <label class="wide">
+            What perks would you actually claim?
+            <textarea name="note" placeholder="Credits, observability, hosting, database, browser automation, model APIs..."></textarea>
+          </label>
+          <button class="button primary wide" type="submit">Join founding builder pool</button>
+          <p id="builder-status" class="status wide" role="status"></p>
+        </form>
       </section>
 
       <section id="feed" class="band">
