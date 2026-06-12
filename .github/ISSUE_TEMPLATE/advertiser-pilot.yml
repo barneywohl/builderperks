@@ -1,0 +1,36 @@
+name: Advertiser pilot interest
+description: Request a BuilderPerks placement pilot.
+title: "Advertiser pilot: "
+labels: ["advertiser-pilot"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        BuilderPerks is testing sponsored devtool offers during AI wait states. Placements are manually approved before going live.
+  - type: input
+    id: company
+    attributes:
+      label: Company
+    validations:
+      required: true
+  - type: input
+    id: offer
+    attributes:
+      label: Offer you want to test
+      placeholder: "$100 credits for AI builders"
+    validations:
+      required: true
+  - type: dropdown
+    id: package
+    attributes:
+      label: Pilot package
+      options:
+        - $250 / 48-hour starter pilot
+        - $750 / launch week
+        - $2,000 / category takeover
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes or approval requirements

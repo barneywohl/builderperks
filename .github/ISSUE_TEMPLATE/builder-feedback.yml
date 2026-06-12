@@ -1,0 +1,32 @@
+name: Builder beta feedback
+description: Try BuilderPerks for one AI work session and leave the signal we need.
+title: "Builder feedback: "
+labels: ["builder-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing BuilderPerks. One honest work-session reaction is more useful than a polished review.
+  - type: dropdown
+    id: reaction
+    attributes:
+      label: How did it feel?
+      options:
+        - Useful
+        - Neutral
+        - Annoying
+    validations:
+      required: true
+  - type: input
+    id: workflow
+    attributes:
+      label: What AI coding workflow did you test with?
+      placeholder: Claude, ChatGPT, Cursor, v0, Lovable, Bolt, other
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: What should change before you would keep it installed?
+    validations:
+      required: true

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BuilderPerks</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <h1>BuilderPerks</h1>
+      <label>
+        API URL
+        <input id="api-url" placeholder="https://builderperks.netlify.app" />
+      </label>
+      <button id="save" type="button">Save</button>
+      <p id="status"></p>
+      <section id="cards"></section>
+      <form id="feedback">
+        <h2>Feedback</h2>
+        <input name="email" type="email" placeholder="email optional" />
+        <textarea name="message" required placeholder="Useful or annoying? What should change?"></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </main>
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>

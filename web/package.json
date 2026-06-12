@@ -1,0 +1,21 @@
+{
+  "name": "builderperks",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "netlify dev",
+    "check": "tsc --noEmit",
+    "smoke": "node scripts/smoke.mjs",
+    "smoke:api": "node scripts/api-smoke.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "latest",
+    "@netlify/functions": "latest"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "netlify-cli": "latest"
+  }
+}

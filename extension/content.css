@@ -1,0 +1,48 @@
+.builderperks-inline {
+  background: #ffffff;
+  border: 1px solid #d8d2c4;
+  border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(23, 23, 23, 0.14);
+  color: #171717;
+  display: grid;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  gap: 8px;
+  margin: 10px auto;
+  max-width: 520px;
+  padding: 14px;
+  position: relative;
+  z-index: 2147483647;
+}
+
+.builderperks-inline small {
+  color: #064e3b;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.builderperks-inline strong {
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.builderperks-inline p {
+  color: #65625a;
+  font-size: 14px;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.builderperks-inline a,
+.builderperks-inline button {
+  background: #0f766e;
+  border: 0;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 9px 10px;
+  text-align: center;
+  text-decoration: none;
+}

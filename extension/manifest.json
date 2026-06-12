@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "BuilderPerks",
+  "version": "0.1.0",
+  "description": "Shows useful sponsored builder offers during AI wait states.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://claude.ai/*",
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://*.netlify.app/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "BuilderPerks"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://claude.ai/*", "https://chatgpt.com/*", "https://chat.openai.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

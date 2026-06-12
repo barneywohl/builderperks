@@ -1,0 +1,8 @@
+web/node_modules/
+web/.netlify/
+web/dist/
+web/.env
+web/.env.*
+!web/.env.example
+artifacts/
+.DS_Store

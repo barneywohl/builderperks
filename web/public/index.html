@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BuilderPerks</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <strong>BuilderPerks</strong>
+        <span>paid offers during AI wait time</span>
+      </div>
+      <nav>
+        <a href="#advertiser">Buy placement</a>
+        <a href="#feed">Live feed</a>
+        <a href="#feedback">Feedback</a>
+      </nav>
+    </header>
+
+    <main>
+      <p id="checkout-status" class="checkout-status" role="status"></p>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Beta testers wanted today</p>
+          <h1>Try useful devtool perks during Claude and ChatGPT wait time.</h1>
+          <p>
+            BuilderPerks is live now. Builders can test the Chrome beta in one work session.
+            Devtool advertisers can reserve a simple $250 pilot placement.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="/builderperks-extension-beta.zip">Download beta ZIP</a>
+            <a class="button" href="#feedback">Give tester feedback</a>
+            <a class="button" href="#advertiser">Reserve $250 pilot</a>
+          </div>
+        </div>
+        <aside class="hero-panel" aria-label="Live unit preview">
+          <div class="wait-label">Claude is thinking...</div>
+          <div id="hero-card" class="placement-card compact"></div>
+        </aside>
+      </section>
+
+      <section class="band launch-strip" aria-label="Today launch sprint">
+        <div>
+          <p class="eyebrow">Today sprint</p>
+          <h2>Looking for 10 builders and 3 devtool sponsors.</h2>
+        </div>
+        <div class="launch-metrics">
+          <div><strong>10</strong><span>builder testers</span></div>
+          <div><strong>$250</strong><span>48-hour pilot</span></div>
+          <div><strong>1</strong><span>work session ask</span></div>
+        </div>
+      </section>
+
+      <section class="band scoreboard" aria-label="Live launch scoreboard">
+        <div>
+          <p class="eyebrow">Live scoreboard</p>
+          <h2>Proof we can show advertisers.</h2>
+        </div>
+        <div id="scoreboard" class="score-grid">
+          <div><strong>0</strong><span>approved placements</span></div>
+          <div><strong>0</strong><span>clicks</span></div>
+          <div><strong>0</strong><span>claims</span></div>
+          <div><strong>0</strong><span>feedback notes</span></div>
+        </div>
+      </section>
+
+      <section id="advertiser" class="band">
+        <div class="section-head">
+          <p class="eyebrow">Advertiser workflow</p>
+          <h2>Reserve a $250 launch pilot</h2>
+          <p>Submit the card. We approve it. It appears in the live feed and extension while we collect claims and feedback.</p>
+        </div>
+
+        <form id="placement-form" class="form-grid">
+          <label>
+            Company
+            <input name="company" required placeholder="Vercel" />
+          </label>
+          <label>
+            Contact name
+            <input name="contactName" required placeholder="Jane" />
+          </label>
+          <label>
+            Work email
+            <input name="email" type="email" required placeholder="jane@company.com" />
+          </label>
+          <label>
+            Destination URL
+            <input name="url" type="url" required placeholder="https://company.com/perk" />
+          </label>
+          <label class="wide">
+            Headline
+            <input name="headline" required maxlength="90" placeholder="$500 credits for AI builders shipping this week" />
+          </label>
+          <label class="wide">
+            Offer body
+            <textarea name="body" required maxlength="260" placeholder="Tell builders exactly what they get and why it matters now."></textarea>
+          </label>
+          <label>
+            CTA
+            <input name="cta" required placeholder="Claim credits" />
+          </label>
+          <label>
+            Audience
+            <input name="audience" required placeholder="AI app builders" />
+          </label>
+          <fieldset class="wide packages">
+            <legend>Package</legend>
+            <label><input type="radio" name="packageId" value="starter" checked /> Starter, $250</label>
+            <label><input type="radio" name="packageId" value="launch" /> Launch, $750</label>
+            <label><input type="radio" name="packageId" value="takeover" /> Takeover, $2,000</label>
+          </fieldset>
+          <fieldset class="wide packages">
+            <legend>Target tools</legend>
+            <label><input type="checkbox" name="targetTools" value="Claude" checked /> Claude</label>
+            <label><input type="checkbox" name="targetTools" value="ChatGPT" checked /> ChatGPT</label>
+            <label><input type="checkbox" name="targetTools" value="Cursor" /> Cursor</label>
+            <label><input type="checkbox" name="targetTools" value="v0" /> v0</label>
+          </fieldset>
+          <button class="button primary wide" type="submit">Submit buy request</button>
+          <p id="placement-status" class="status wide" role="status"></p>
+        </form>
+      </section>
+
+      <section id="feed" class="band">
+        <div class="section-head">
+          <p class="eyebrow">Builder workflow</p>
+          <h2>Live placements</h2>
+          <p>These are the cards the extension can show during AI wait states.</p>
+        </div>
+        <div id="placements" class="placement-grid"></div>
+      </section>
+
+      <section id="extension" class="band two-column">
+        <div>
+          <p class="eyebrow">Extension</p>
+          <h2>Test install</h2>
+          <p>
+            Download the beta ZIP, unzip it, then load the folder as an unpacked Chrome extension.
+            The default API URL is already set to this live deployment.
+          </p>
+          <a class="button primary" href="/builderperks-extension-beta.zip">Download beta ZIP</a>
+        </div>
+        <div class="checklist">
+          <div>1. Download and unzip the beta package</div>
+          <div>2. Open Chrome extensions and enable Developer Mode</div>
+          <div>3. Load the unzipped folder</div>
+          <div>4. Use Claude or ChatGPT, then send feedback</div>
+        </div>
+      </section>
+
+      <section id="feedback" class="band">
+        <div class="section-head">
+          <p class="eyebrow">Feedback</p>
+          <h2>Collect signal fast</h2>
+          <p>Builders and advertisers can tell us if this is useful before we build auctions.</p>
+        </div>
+        <form id="feedback-form" class="form-grid">
+          <label>
+            Role
+            <select name="role">
+              <option value="builder">Builder</option>
+              <option value="advertiser">Advertiser</option>
+            </select>
+          </label>
+          <label>
+            Rating
+            <select name="rating">
+              <option value="5">5, strong yes</option>
+              <option value="4">4, useful</option>
+              <option value="3">3, maybe</option>
+              <option value="2">2, weak</option>
+              <option value="1">1, no</option>
+            </select>
+          </label>
+          <label class="wide">
+            Email
+            <input name="email" type="email" placeholder="optional@email.com" />
+          </label>
+          <label class="wide">
+            Message
+            <textarea name="message" required placeholder="What should change before this is worth using or buying?"></textarea>
+          </label>
+          <button class="button primary wide" type="submit">Send feedback</button>
+          <p id="feedback-status" class="status wide" role="status"></p>
+        </form>
+      </section>
+
+      <section id="admin" class="band">
+        <div class="section-head">
+          <p class="eyebrow">Admin</p>
+          <h2>Approve pending buys</h2>
+          <p>Use the configured admin key to approve paid placements and review clicks, claims, and feedback.</p>
+        </div>
+        <div class="admin-controls">
+          <input id="admin-key" placeholder="Admin key" />
+          <button id="load-admin" class="button" type="button">Load admin</button>
+        </div>
+        <div id="admin-list" class="admin-list"></div>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
