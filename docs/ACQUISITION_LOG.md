@@ -328,3 +328,34 @@ Next:
 - If BuySellAds/Carbon or EthicalAds accepts, wire their API/placement approval path into `/api/ad-stream`.
 - If AdButler or Kevel responds first, use them as campaign/ad-server infrastructure while continuing direct advertiser sales.
 - Continue recruiting publisher surfaces so the partner replies have real inventory proof behind them.
+
+## 2026-06-12 18:32 ET
+
+Post-restart continuation checkpoint.
+
+Verified state:
+
+- Repo was intact with latest pushed commit `a57df11`.
+- Production API responded at `https://builderperks.netlify.app/api/stats`.
+- Current live stats:
+  - `approvedPlacements: 2`
+  - `clicks: 6`
+  - `claims: 0`
+  - `publishers: 1`
+  - `adImpressions: 2`
+  - `estimatedPublisherEarningsUsd: 0.04`
+- Gmail search for replies from BuySellAds, Carbon, EthicalAds, AdButler, and Kevel since 2026-06-12 returned no matches.
+
+Product hardening shipped next:
+
+- Added a clearer publisher API quickstart to the live page.
+- Added immediate post-registration curl example using the generated publisher id.
+- Added live dashboard stats for publisher count and estimated unpaid publisher earnings.
+- Added README publisher quickstart so GitHub visitors can self-serve the API flow.
+
+Verification:
+
+- `npm run build` passed.
+- `npm run check` passed.
+- `npm run smoke` passed.
+- `npm run smoke:api` was not run locally because `netlify dev` failed after restart with Netlify CLI unauthorized. Production API was verified directly instead.

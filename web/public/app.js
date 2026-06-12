@@ -117,7 +117,9 @@ async function loadStats() {
     <div><strong>${escapeHtml(stats.clicks)}</strong><span>clicks</span></div>
     <div><strong>${escapeHtml(stats.claims)}</strong><span>claims</span></div>
     <div><strong>${escapeHtml(stats.builderSignups ?? 0)}</strong><span>founding builders</span></div>
+    <div><strong>${escapeHtml(stats.publishers ?? 0)}</strong><span>publishers</span></div>
     <div><strong>${escapeHtml(stats.adImpressions ?? 0)}</strong><span>ad impressions</span></div>
+    <div><strong>$${escapeHtml(Number(stats.estimatedPublisherEarningsUsd ?? 0).toFixed(2))}</strong><span>est. unpaid earnings</span></div>
     <div><strong>${escapeHtml(stats.feedback)}</strong><span>feedback notes</span></div>
   `;
   const builderCount = document.getElementById("builder-signup-count");
@@ -194,9 +196,11 @@ async function submitPublisher(event) {
       method: "POST",
       body: JSON.stringify(formData(event.currentTarget))
     });
+    const publisherId = data.publisher.id;
+    const sampleUrl = `${window.location.origin}/api/ad-stream?publisherId=${encodeURIComponent(publisherId)}&surface=terminal&context=deploying%20an%20AI%20app`;
     status.innerHTML = data.alreadyJoined
-      ? `Already registered. Publisher id: <code>${escapeHtml(data.publisher.id)}</code>`
-      : `Registered. Publisher id: <code>${escapeHtml(data.publisher.id)}</code>. Use it with <code>/api/ad-stream</code>.`;
+      ? `Already registered. Publisher id: <code>${escapeHtml(publisherId)}</code>`
+      : `Registered. Publisher id: <code>${escapeHtml(publisherId)}</code>. Test it now:<pre class="code-sample mini"><code>curl "${escapeHtml(sampleUrl)}"</code></pre>`;
     event.currentTarget.reset();
     await loadStats();
   } catch (error) {

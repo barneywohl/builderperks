@@ -36,6 +36,26 @@ Open an `Advertiser pilot interest` issue or use the live buy form.
 - Click tracking for advertiser reporting.
 - Builder/advertiser feedback capture.
 - Chrome extension that reads the live feed, locally matches offers to AI build context, and injects cards near wait-state text.
+- Supply-side ad stream API for terminal, IDE, extension, and agent publishers.
+
+## Publisher API Quickstart
+
+Register a publisher surface:
+
+```bash
+curl -X POST https://builderperks.netlify.app/api/publishers \
+  -H "content-type: application/json" \
+  -d '{"name":"My CLI","email":"founder@example.com","surface":"terminal"}'
+```
+
+Stream a labeled sponsored card:
+
+```bash
+curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app"
+```
+
+Use the returned `card` fields in your UI and route clicks through the returned `clickUrl`.
+Publisher earnings are estimated and unpaid until advertiser revenue and payout rails are approved.
 
 ## KISS Scope
 

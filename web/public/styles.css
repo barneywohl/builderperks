@@ -380,7 +380,14 @@ textarea {
   gap: 10px;
 }
 
+.api-steps {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+
 .checklist div,
+.api-steps div,
 .admin-item {
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--line);
@@ -421,6 +428,10 @@ code {
   color: #d1fae5;
   overflow-x: auto;
   padding: 14px;
+}
+
+.code-sample.mini {
+  margin: 10px 0 0;
 }
 
 @media (max-width: 860px) {

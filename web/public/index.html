@@ -185,7 +185,15 @@
             Founding publishers can register a surface, call one endpoint, and receive a labeled sponsored offer
             with a tracked click URL. Earnings are estimated until advertiser revenue and payout rails are approved.
           </p>
-          <pre class="code-sample"><code>GET /api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app</code></pre>
+          <div class="api-steps">
+            <div>1. Register a publisher surface.</div>
+            <div>2. Call the ad stream from your terminal, IDE, extension, or agent UI.</div>
+            <div>3. Render the labeled card and use the tracked click URL.</div>
+          </div>
+          <pre class="code-sample"><code>curl -X POST https://builderperks.netlify.app/api/publishers \
+  -H "content-type: application/json" \
+  -d '{"name":"My CLI","email":"founder@example.com","surface":"terminal"}'</code></pre>
+          <pre class="code-sample"><code>curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app"</code></pre>
         </div>
         <form id="publisher-form" class="form-grid wide-panel">
           <label>
@@ -205,7 +213,7 @@
             <input name="payoutHandle" placeholder="Stripe email or manual invoice contact" />
           </label>
           <button class="button primary wide" type="submit">Register publisher surface</button>
-          <p id="publisher-status" class="status wide" role="status"></p>
+          <div id="publisher-status" class="status wide" role="status"></div>
         </form>
       </section>
 
