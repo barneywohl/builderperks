@@ -1,5 +1,6 @@
 web/node_modules/
 web/.netlify/
+/.netlify/
 web/dist/
 web/.env
 web/.env.*
