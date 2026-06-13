@@ -113,7 +113,7 @@ export default async (req: Request) => {
     revenueShare: {
       estimatedPublisherEarningsUsd: impression.estimatedPublisherEarningsUsd,
       payoutStatus: "estimated_unpaid",
-      note: "No automatic payouts are made until advertiser revenue and payout rails are approved."
+      note: "Estimated publisher revenue can help offset tooling bills after advertiser revenue and payout rails are approved. It is not payment for watching or clicking ads."
     },
     demand: {
       source: demandSourceForPlacement(placement),

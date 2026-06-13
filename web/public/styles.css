@@ -241,6 +241,56 @@ main {
   line-height: 1.2;
 }
 
+.publisher-loop {
+  align-items: start;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1fr);
+}
+
+.publisher-loop h2 {
+  font-size: 30px;
+  letter-spacing: 0;
+  line-height: 1.1;
+  margin: 0 0 12px;
+}
+
+.publisher-loop p {
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.reward-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.reward-grid div {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  min-height: 102px;
+  padding: 14px;
+}
+
+.reward-grid strong {
+  color: var(--accent-dark);
+  font-size: 26px;
+  line-height: 1;
+}
+
+.reward-grid span {
+  align-self: end;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
 .form-grid {
   display: grid;
   gap: 14px;

@@ -126,6 +126,8 @@ async function loadStats() {
   if (builderCount) builderCount.textContent = String(stats.builderSignups ?? 0);
   const publisherCount = document.getElementById("publisher-count");
   if (publisherCount) publisherCount.textContent = String(stats.publishers ?? 0);
+  const publisherEarningsCount = document.getElementById("publisher-earnings-count");
+  if (publisherEarningsCount) publisherEarningsCount.textContent = `$${Number(stats.estimatedPublisherEarningsUsd ?? 0).toFixed(2)}`;
 }
 
 async function submitPlacement(event) {

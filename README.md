@@ -56,6 +56,7 @@ BUILDERPERKS_KEYWORDS=typescript,react,postgres \
 
 The helper prints one labeled sponsored line and fails quietly if the network or API is down.
 It sends only broad keywords you choose. It does not send prompts or personal data.
+Publisher earnings are estimated revenue share for hosting a respectful sponsored line, not payment for watching or clicking ads.
 
 Register a publisher surface:
 
