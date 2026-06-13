@@ -399,3 +399,28 @@ Reply status:
   - Broad keyword-only targeting is the preferred first pilot path.
   - `/api/ad-stream` now supports sanitized keywords, category hints, and `format=statusline`.
   - Asked whether the next step should be a short technical spec/sample traffic shape or booking David's calendar.
+
+## 2026-06-12 22:48 ET
+
+First narrow growth outbound wave sent after Jake provided directive keyword.
+
+Decision:
+
+- Do not broad-launch Product Hunt, Hacker News, or daily.dev yet.
+- Broad launch remains gated on real proof: 5 publisher surfaces, 25 impressions, 5 feedback notes, 1 claim or advertiser pilot signal, EthicalAds next step, and demo/proof packet.
+- Focus this wave on direct advertiser pilots and one status-line publisher prospect.
+
+Sent:
+
+| Segment | Recipient | Ask | Evidence |
+| --- | --- | --- | --- |
+| Advertiser | `sales@posthog.com` | $250 manually approved 48-hour pilot for analytics/events build-moment intent. | `/Volumes/X10/clawd/shared/status/builderperks-growth-posthog-advertiser-pilot-sent-20260612-2248.png` |
+| Advertiser | `support@clerk.com` | $250 manually approved 48-hour pilot for auth-category build-moment offers. | `/Volumes/X10/clawd/shared/status/builderperks-growth-clerk-advertiser-pilot-sent-20260612-2248.png` |
+| Publisher feedback | `ddoliveira@uwaterloo.ca` | One-session feedback on privacy-safe sponsored Claude Code/status-line line. | `/Volumes/X10/clawd/shared/status/builderperks-growth-daniel-statusline-publisher-sent-20260612-2248.png` |
+| Advertiser | `help@firecrawl.com` | $250 manually approved 48-hour pilot for AI agent builder traffic. | `/Volumes/X10/clawd/shared/status/builderperks-growth-firecrawl-advertiser-followup-sent-20260612-2248.png` |
+
+Notes:
+
+- Messaging emphasized build-moment intent, privacy-safe broad keywords, no full prompts/personal data, and a simple API that renders terminal/status-line/IDE/agent formats.
+- This is a targeted proof-gathering wave, not a public launch.
+- Next checkpoint should monitor Gmail for replies and pursue 6 more status-line/terminal/IDE publisher prospects.
