@@ -99,12 +99,15 @@ assert.equal(publisher.response.status, 201);
 assert.equal(publisher.data.ok, true);
 assert.equal(publisher.data.publisher.status, "active");
 
-const streamed = await request(`/api/ad-stream?publisherId=${encodeURIComponent(publisher.data.publisher.id)}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres`);
+const streamed = await request(`/api/ad-stream?publisherId=${encodeURIComponent(publisher.data.publisher.id)}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&format=statusline`);
 assert.equal(streamed.response.status, 200);
 assert.equal(streamed.data.ok, true);
 assert.ok(streamed.data.ad);
 assert.ok(streamed.data.ad.clickUrl.includes("/api/track"));
 assert.deepEqual(streamed.data.targeting.keywords, ["typescript", "react", "postgres"]);
+assert.ok(streamed.data.targeting.categories.includes("database"));
+assert.equal(streamed.data.render.format, "statusline");
+assert.match(streamed.data.render.statusLine, /^Sponsored:/);
 assert.equal(streamed.data.revenueShare.payoutStatus, "estimated_unpaid");
 
 console.log(`api smoke ok: ${placementId} approved, tracked, claimed, and reported`);

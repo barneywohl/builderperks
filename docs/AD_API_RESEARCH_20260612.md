@@ -137,4 +137,6 @@ Product implication:
 
 - `/api/ad-stream` should support privacy-safe `keywords` such as `typescript,react,postgres`.
 - BuilderPerks should not send full prompts or personal data to ad partners.
+- Terminal/status-line publishers should be able to request `format=statusline` and render one ready-made sponsored line.
+- BuilderPerks should return simple advertiser category hints from keywords and placement copy so demand partners can reason about targeting.
 - The reply should confirm status-line/similar surfaces, demand-side need, revenue-share intent, and keyword-only targeting as the preferred pilot path.

@@ -51,12 +51,13 @@ curl -X POST https://builderperks.netlify.app/api/publishers \
 Stream a labeled sponsored card:
 
 ```bash
-curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres"
+curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&format=statusline"
 ```
 
 Use the returned `card` fields in your UI and route clicks through the returned `clickUrl`.
 Use `keywords` for broad programming language, framework, and project targeting only.
 Do not send personal data or full prompts.
+Terminal publishers can use `format=statusline` and render `render.statusLine` directly.
 Publisher earnings are estimated and unpaid until advertiser revenue and payout rails are approved.
 
 ## KISS Scope

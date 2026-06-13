@@ -2,6 +2,15 @@ import type { Config } from "@netlify/functions";
 import { badRequest, cleanText, id, json, readState, siteUrl, writeState, type Impression, type Placement } from "./_data.mjs";
 
 const DEFAULT_PUBLISHER_EARNINGS_USD = 0.02;
+const CATEGORY_TERMS: Record<string, string[]> = {
+  hosting: ["deploy", "deployment", "hosting", "infra", "railway", "vercel", "render", "server"],
+  database: ["postgres", "database", "db", "sql", "neon", "supabase", "prisma"],
+  observability: ["logs", "observability", "monitoring", "tracing", "metrics", "helicone", "sentry"],
+  testing: ["test", "testing", "qa", "playwright", "vitest", "jest"],
+  ai: ["ai", "agent", "llm", "model", "prompt", "openai", "anthropic"],
+  auth: ["auth", "login", "oauth", "clerk", "supabase"],
+  analytics: ["analytics", "events", "tracking", "posthog"]
+};
 
 function parseKeywords(value: string) {
   return [...new Set(value
@@ -18,6 +27,18 @@ function scorePlacement(placement: Placement, context: string, surface: string, 
   return terms.reduce((score, term) => score + (haystack.includes(term) ? 1 : 0), 0);
 }
 
+function categoryHints(placement: Placement, keywords: string[]) {
+  const haystack = `${placement.company} ${placement.headline} ${placement.body} ${placement.audience} ${placement.targetTools.join(" ")} ${keywords.join(" ")}`.toLowerCase();
+  return Object.entries(CATEGORY_TERMS)
+    .filter(([, terms]) => terms.some((term) => haystack.includes(term)))
+    .map(([category]) => category)
+    .slice(0, 4);
+}
+
+function statusLine(placement: Placement, clickUrl: string) {
+  return `Sponsored: ${placement.company} - ${placement.headline} | ${clickUrl}`;
+}
+
 export default async (req: Request) => {
   if (req.method !== "GET") {
     return json({ ok: false, error: "Method not allowed" }, { status: 405 });
@@ -28,6 +49,7 @@ export default async (req: Request) => {
   const surface = cleanText(url.searchParams.get("surface"), "terminal");
   const context = cleanText(url.searchParams.get("context"), "AI builder workflow");
   const keywords = parseKeywords(cleanText(url.searchParams.get("keywords"), ""));
+  const format = cleanText(url.searchParams.get("format"), "card");
   if (!publisherId) return badRequest("publisherId is required");
 
   const state = await readState();
@@ -55,6 +77,7 @@ export default async (req: Request) => {
   const origin = siteUrl(req);
   const source = `stream:${publisherId}:${surface}`.slice(0, 600);
   const clickUrl = `${origin}/api/track?placementId=${encodeURIComponent(placement.id)}&source=${encodeURIComponent(source)}`;
+  const categories = categoryHints(placement, keywords);
 
   return json({
     ok: true,
@@ -66,7 +89,12 @@ export default async (req: Request) => {
     },
     targeting: {
       keywords,
+      categories,
       note: "Send broad programming language, framework, and project keywords only. Do not send personal data or full prompts."
+    },
+    render: {
+      format,
+      statusLine: statusLine(placement, clickUrl)
     },
     ad: {
       placementId: placement.id,
@@ -76,6 +104,7 @@ export default async (req: Request) => {
       cta: placement.cta,
       audience: placement.audience,
       targetTools: placement.targetTools,
+      categories,
       clickUrl,
       disclosure: "Sponsored BuilderPerks offer"
     }

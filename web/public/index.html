@@ -193,10 +193,11 @@
           <pre class="code-sample"><code>curl -X POST https://builderperks.netlify.app/api/publishers \
   -H "content-type: application/json" \
   -d '{"name":"My CLI","email":"founder@example.com","surface":"terminal"}'</code></pre>
-          <pre class="code-sample"><code>curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres"</code></pre>
+          <pre class="code-sample"><code>curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&format=statusline"</code></pre>
           <p class="fine-print">
             For targeting, send broad programming language, framework, and project keywords only.
-            Do not send personal data or full prompts.
+            Do not send personal data or full prompts. Terminal publishers can use `format=statusline`
+            and render the returned `render.statusLine` value directly.
           </p>
         </div>
         <form id="publisher-form" class="form-grid wide-panel">

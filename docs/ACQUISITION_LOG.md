@@ -382,6 +382,8 @@ Immediate product response:
 - Add optional `keywords` support to `/api/ad-stream`.
 - Store only sanitized short targeting keywords on impressions.
 - Return a targeting note telling publishers not to send personal data or full prompts.
+- Return category hints from broad placement/keyword matches.
+- Return `render.statusLine` for Claude Code/status-line and terminal-native publisher surfaces.
 - Update the public API quickstart and README to show `keywords=typescript,react,postgres`.
 
 Reply status:

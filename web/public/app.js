@@ -197,7 +197,7 @@ async function submitPublisher(event) {
       body: JSON.stringify(formData(event.currentTarget))
     });
     const publisherId = data.publisher.id;
-    const sampleUrl = `${window.location.origin}/api/ad-stream?publisherId=${encodeURIComponent(publisherId)}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres`;
+    const sampleUrl = `${window.location.origin}/api/ad-stream?publisherId=${encodeURIComponent(publisherId)}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&format=statusline`;
     status.innerHTML = data.alreadyJoined
       ? `Already registered. Publisher id: <code>${escapeHtml(publisherId)}</code>`
       : `Registered. Publisher id: <code>${escapeHtml(publisherId)}</code>. Test it now:<pre class="code-sample mini"><code>curl "${escapeHtml(sampleUrl)}"</code></pre>`;
