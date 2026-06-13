@@ -61,7 +61,13 @@ export default async (req: Request) => {
       .map((placement) => ({
         ...placement,
         clickCount: state.clicks.filter((click) => click.placementId === placement.id).length,
-        claimCount: state.claims.filter((claim) => claim.placementId === placement.id).length
+        claimCount: state.claims.filter((claim) => claim.placementId === placement.id).length,
+        relevance: {
+          total: state.relevanceEvents.filter((event) => event.placementId === placement.id).length,
+          needThis: state.relevanceEvents.filter((event) => event.placementId === placement.id && event.action === "need_this").length,
+          notRelevant: state.relevanceEvents.filter((event) => event.placementId === placement.id && event.action === "not_relevant").length,
+          hideCategory: state.relevanceEvents.filter((event) => event.placementId === placement.id && event.action === "hide_category").length
+        }
       }));
 
     return json({ ok: true, placements });

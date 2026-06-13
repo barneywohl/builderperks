@@ -22,6 +22,12 @@
   justify-content: space-between;
 }
 
+.builderperks-feedback {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .builderperks-inline small {
   color: #064e3b;
   font-size: 12px;
@@ -79,4 +85,9 @@
 .builderperks-inline button:hover {
   border-color: #0f766e;
   color: #064e3b;
+}
+
+.builderperks-inline button:disabled {
+  cursor: default;
+  opacity: 0.7;
 }

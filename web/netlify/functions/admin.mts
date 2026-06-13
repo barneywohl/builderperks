@@ -1,5 +1,11 @@
 import type { Config } from "@netlify/functions";
-import { adminAuthorized, badRequest, cleanText, json, parseJson, readState, writeState } from "./_data.mjs";
+import { adminAuthorized, badRequest, cleanText, json, parseJson, readState, writeState, type Placement } from "./_data.mjs";
+
+function cleanDemandSource(value: unknown): Placement["demandSource"] | null {
+  return value === "builderperks_seed" || value === "direct_advertiser" || value === "approved_partner"
+    ? value
+    : null;
+}
 
 export default async (req: Request) => {
   if (!(await adminAuthorized(req))) return json({ ok: false, error: "Unauthorized" }, { status: 401 });
@@ -10,7 +16,13 @@ export default async (req: Request) => {
     const placements = state.placements.map((placement) => ({
       ...placement,
       clickCount: state.clicks.filter((click) => click.placementId === placement.id).length,
-      claimCount: state.claims.filter((claim) => claim.placementId === placement.id).length
+      claimCount: state.claims.filter((claim) => claim.placementId === placement.id).length,
+      relevance: {
+        total: state.relevanceEvents.filter((event) => event.placementId === placement.id).length,
+        needThis: state.relevanceEvents.filter((event) => event.placementId === placement.id && event.action === "need_this").length,
+        notRelevant: state.relevanceEvents.filter((event) => event.placementId === placement.id && event.action === "not_relevant").length,
+        hideCategory: state.relevanceEvents.filter((event) => event.placementId === placement.id && event.action === "hide_category").length
+      }
     }));
     return json({ ok: true, ...state, placements });
   }
@@ -32,6 +44,11 @@ export default async (req: Request) => {
   placement.status = status;
   placement.updatedAt = new Date().toISOString();
   if (body.paymentStatus === "paid") placement.paymentStatus = "paid";
+  const demandSource = cleanDemandSource(body.demandSource);
+  if (demandSource) placement.demandSource = demandSource;
+  if (body.demandPartner !== undefined) {
+    placement.demandPartner = cleanText(body.demandPartner) || undefined;
+  }
   await writeState(state);
 
   return json({ ok: true, placement });

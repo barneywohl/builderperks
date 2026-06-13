@@ -3,6 +3,7 @@ let placements = [];
 let insertedAt = 0;
 let currentApiUrl = defaultApiUrl;
 const dayKey = new Date().toISOString().slice(0, 10);
+const hiddenReasonKey = "hiddenReasonLabels";
 const contextRules = [
   { label: "database work", terms: ["postgres", "database", "sql", "schema", "migration", "supabase", "neon", "prisma"] },
   { label: "deployment work", terms: ["deploy", "deployment", "hosting", "server", "infra", "docker", "railway", "render", "fly.io"] },
@@ -20,7 +21,7 @@ const defaultSettings = {
 };
 
 async function getSettings() {
-  const stored = await chrome.storage.sync.get(["enabled", "pausedUntil", "dailyCap", "dayKey", "shownToday"]);
+  const stored = await chrome.storage.sync.get(["enabled", "pausedUntil", "dailyCap", "dayKey", "shownToday", hiddenReasonKey]);
   const settings = { ...defaultSettings, ...stored };
   if (settings.dayKey !== dayKey) {
     settings.dayKey = dayKey;
@@ -48,6 +49,39 @@ async function loadPlacements() {
     placements = data.placements || [];
   } catch {
     placements = [];
+  }
+}
+
+function hiddenReasonLabels(settings) {
+  return Array.isArray(settings[hiddenReasonKey]) ? settings[hiddenReasonKey] : [];
+}
+
+function categoryFromReason(reason) {
+  const label = String(reason || "")
+    .replace(/^Matched locally to\s+/i, "")
+    .split(" + ")
+    .map((item) => item.trim())
+    .filter(Boolean)[0];
+  return (label || "general AI-builder perk").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+}
+
+async function sendRelevanceEvent(placement, action, reason) {
+  const category = categoryFromReason(reason);
+  try {
+    await fetch(`${currentApiUrl}/api/relevance`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        placementId: placement.id,
+        action,
+        matchReason: reason,
+        category,
+        categoryHint: category,
+        source: "extension"
+      })
+    });
+  } catch {
+    // Relevance reporting should never break the user's AI workflow.
   }
 }
 
@@ -93,15 +127,18 @@ function scorePlacement(placement, contextText) {
   return { score, reasons: [...new Set(reasons)] };
 }
 
-function choosePlacement() {
+function choosePlacement(settings = {}) {
   const contextText = pageContextText();
+  const hiddenLabels = hiddenReasonLabels(settings);
   const ranked = placements
     .map((placement) => ({ placement, match: scorePlacement(placement, contextText) }))
+    .filter((item) => !item.match.reasons.some((label) => hiddenLabels.includes(label)))
     .sort((a, b) => b.match.score - a.match.score);
   const best = ranked[0];
+  if (!ranked.length) return null;
   if (!best || best.match.score <= 0) {
     return {
-      placement: placements[Math.floor(Math.random() * placements.length)],
+      placement: ranked[Math.floor(Math.random() * ranked.length)].placement,
       reason: "Shown as a general AI-builder perk"
     };
   }
@@ -153,7 +190,42 @@ function buildCard(placement, reason) {
   cta.rel = "noreferrer";
   cta.textContent = placement.cta;
 
-  card.append(controls, headline, body, why, cta);
+  const feedback = document.createElement("div");
+  feedback.className = "builderperks-feedback";
+  const needThis = document.createElement("button");
+  needThis.type = "button";
+  needThis.textContent = "Need this";
+  needThis.addEventListener("click", async () => {
+    await sendRelevanceEvent(placement, "need_this", reason);
+    needThis.textContent = "Saved";
+    needThis.disabled = true;
+  });
+  const notRelevant = document.createElement("button");
+  notRelevant.type = "button";
+  notRelevant.textContent = "Not relevant";
+  notRelevant.addEventListener("click", async () => {
+    await sendRelevanceEvent(placement, "not_relevant", reason);
+    card.remove();
+  });
+  const hideSimilar = document.createElement("button");
+  hideSimilar.type = "button";
+  hideSimilar.textContent = "Hide category";
+  hideSimilar.addEventListener("click", async () => {
+    await sendRelevanceEvent(placement, "hide_category", reason);
+    const labels = reason
+      .replace(/^Matched locally to\s+/i, "")
+      .split(" + ")
+      .map((label) => label.trim())
+      .filter(Boolean);
+    const stored = await chrome.storage.sync.get([hiddenReasonKey]);
+    await updateSettings({
+      [hiddenReasonKey]: [...new Set([...hiddenReasonLabels(stored), ...labels])].slice(0, 20)
+    });
+    card.remove();
+  });
+  feedback.append(needThis, notRelevant, hideSimilar);
+
+  card.append(controls, headline, body, why, cta, feedback);
   return card;
 }
 
@@ -168,7 +240,9 @@ async function maybeInsert() {
   const target = nodes.at(-1);
   if (!target) return;
 
-  const { placement, reason } = choosePlacement();
+  const choice = choosePlacement(settings);
+  if (!choice) return;
+  const { placement, reason } = choice;
   target.insertAdjacentElement("afterend", buildCard(placement, reason));
   insertedAt = Date.now();
   await updateSettings({ shownToday: Number(settings.shownToday || 0) + 1, dayKey });

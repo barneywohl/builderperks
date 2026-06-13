@@ -4,6 +4,7 @@ const api = {
   builders: "/api/builders",
   publishers: "/api/publishers",
   feedback: "/api/feedback",
+  relevance: "/api/relevance",
   stats: "/api/stats",
   track: "/api/track",
   admin: "/api/admin"
@@ -46,6 +47,7 @@ function trackUrl(placement, source = "web") {
 function placementCard(placement) {
   const claims = placement.claimCount ?? 0;
   const clicks = placement.clickCount ?? 0;
+  const relevance = placement.relevance || {};
   const article = document.createElement("article");
   article.className = "placement-card";
   article.innerHTML = `
@@ -56,6 +58,7 @@ function placementCard(placement) {
     <div class="impact-meter" aria-label="Placement activity">
       <span>${clicks} clicks</span>
       <span>${claims} claims</span>
+      <span>${relevance.needThis ?? 0} need this</span>
     </div>
     <a class="button" href="${trackUrl(placement)}" target="_blank" rel="noreferrer">${escapeHtml(placement.cta)}</a>
     <form class="claim-form">
@@ -102,6 +105,7 @@ async function loadPlacements() {
       <div class="impact-meter">
         <span>${first.clickCount ?? 0} clicks</span>
         <span>${first.claimCount ?? 0} claims</span>
+        <span>${first.relevance?.needThis ?? 0} need this</span>
       </div>
       <a class="button primary" href="${trackUrl(first)}" target="_blank" rel="noreferrer">${escapeHtml(first.cta)}</a>
     `;
@@ -116,6 +120,9 @@ async function loadStats() {
     <div><strong>${escapeHtml(stats.approvedPlacements)}</strong><span>approved placements</span></div>
     <div><strong>${escapeHtml(stats.clicks)}</strong><span>clicks</span></div>
     <div><strong>${escapeHtml(stats.claims)}</strong><span>claims</span></div>
+    <div><strong>${escapeHtml(stats.needThis ?? 0)}</strong><span>need this</span></div>
+    <div><strong>${escapeHtml(stats.notRelevant ?? 0)}</strong><span>not relevant</span></div>
+    <div><strong>${escapeHtml(stats.hideCategory ?? 0)}</strong><span>hidden categories</span></div>
     <div><strong>${escapeHtml(stats.builderSignups ?? 0)}</strong><span>founding builders</span></div>
     <div><strong>${escapeHtml(stats.publishers ?? 0)}</strong><span>publishers</span></div>
     <div><strong>${escapeHtml(stats.adImpressions ?? 0)}</strong><span>ad impressions</span></div>
@@ -225,7 +232,7 @@ async function loadAdmin() {
       item.innerHTML = `
         <h3>${escapeHtml(placement.company)}: ${escapeHtml(placement.headline)}</h3>
         <div>${escapeHtml(placement.status)} · ${escapeHtml(placement.paymentStatus)} · ${escapeHtml(placement.email)}</div>
-        <div>${placement.clickCount ?? 0} clicks · ${placement.claimCount ?? 0} claims</div>
+        <div>${placement.clickCount ?? 0} clicks · ${placement.claimCount ?? 0} claims · ${placement.relevance?.needThis ?? 0} need this · ${placement.relevance?.notRelevant ?? 0} not relevant · ${placement.relevance?.hideCategory ?? 0} hidden categories</div>
         <p>${escapeHtml(placement.body)}</p>
         <div class="actions">
           <button class="button primary" data-status="approved">Approve</button>

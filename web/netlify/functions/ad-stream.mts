@@ -116,11 +116,16 @@ function demandSourceForPlacement(placement: Placement) {
 
 function demandStatusForPlacement(placement: Placement) {
   const activeSource = demandSourceForPlacement(placement);
+  const approvedPartnerIntegrations = placement.demandSource === "approved_partner" && placement.demandPartner
+    ? [placement.demandPartner]
+    : [];
   return {
     activeSource,
-    activeSourceLabel: "BuilderPerks seed/direct approved placements",
-    approvedPartnerIntegrations: [] as string[],
-    pendingPartnerIntegrations: ["EthicalAds", "BuySellAds/Carbon", "AdButler", "Kevel"],
+    activeSourceLabel: placement.demandSource === "approved_partner" && placement.demandPartner
+      ? `Approved partner: ${placement.demandPartner}`
+      : "BuilderPerks seed/direct approved placements",
+    approvedPartnerIntegrations,
+    pendingPartnerIntegrations: ["EthicalAds", "BuySellAds/Carbon", "AdButler", "Kevel"].filter((partner) => !approvedPartnerIntegrations.includes(partner)),
     note: "Cold-start ads come from BuilderPerks seed or manually approved direct placements until an external demand partner approves terminal/IDE inventory."
   };
 }

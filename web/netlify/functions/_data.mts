@@ -44,6 +44,19 @@ export type Feedback = {
   message: string;
 };
 
+export type RelevanceAction = "need_this" | "not_relevant" | "hide_category";
+
+export type RelevanceEvent = {
+  id: string;
+  createdAt: string;
+  placementId: string;
+  action: RelevanceAction;
+  matchReason: string;
+  category: string;
+  categoryHint: string;
+  source: string;
+};
+
 export type BuilderSignup = {
   id: string;
   createdAt: string;
@@ -87,6 +100,7 @@ type State = {
   placements: Placement[];
   claims: Claim[];
   feedback: Feedback[];
+  relevanceEvents: RelevanceEvent[];
   clicks: Click[];
   builders: BuilderSignup[];
   publishers: Publisher[];
@@ -136,6 +150,7 @@ const initialState: State = {
   ],
   claims: [],
   feedback: [],
+  relevanceEvents: [],
   clicks: [],
   builders: [],
   publishers: [],
@@ -143,7 +158,7 @@ const initialState: State = {
 };
 
 const storeName = "builderperks-state";
-const fallbackAdminKeyHash = "664bd683ece9e31aee56e286f233ee92fa245846e2b3142cd17f0d0bf47dcb09";
+const fallbackAdminKeyHash = "5f082a6736a145c17b3504a9558488df204e5d1d4b3e3dd2b66ce66f5020067b";
 
 export function env(name: string) {
   return Netlify.env.get(name) || process.env[name] || "";
@@ -166,7 +181,8 @@ export async function readState(): Promise<State> {
     ...(stored ?? {}),
     builders: (stored as Partial<State> | null)?.builders ?? [],
     publishers: (stored as Partial<State> | null)?.publishers ?? [],
-    impressions: (stored as Partial<State> | null)?.impressions ?? []
+    impressions: (stored as Partial<State> | null)?.impressions ?? [],
+    relevanceEvents: (stored as Partial<State> | null)?.relevanceEvents ?? []
   };
 }
 

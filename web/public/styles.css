@@ -53,6 +53,7 @@ a {
 main {
   margin: 0 auto;
   max-width: 1180px;
+  min-width: 0;
   padding: 28px 22px 56px;
 }
 
@@ -135,6 +136,17 @@ main {
   padding: 34px 0;
 }
 
+.hero > *,
+.launch-strip > *,
+.install-flow > *,
+.scoreboard > *,
+.publisher-loop > *,
+.two-column > *,
+.form-grid > *,
+.placement-grid > * {
+  min-width: 0;
+}
+
 .hero-panel {
   background: #111827;
   border: 0;
@@ -196,6 +208,49 @@ main {
   font-size: 13px;
   font-weight: 800;
   line-height: 1.25;
+}
+
+.install-flow {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1fr);
+}
+
+.install-flow h2 {
+  font-size: 32px;
+  letter-spacing: 0;
+  line-height: 1.08;
+  margin: 0 0 12px;
+}
+
+.verify-steps {
+  counter-reset: none;
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.verify-steps li {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 5px;
+  min-height: 84px;
+  padding: 14px;
+}
+
+.verify-steps strong {
+  color: var(--accent-dark);
+  font-size: 15px;
+}
+
+.verify-steps span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
 }
 
 .scoreboard {
@@ -482,6 +537,7 @@ code {
   background: #111827;
   border-radius: 8px;
   color: #d1fae5;
+  max-width: 100%;
   overflow-x: auto;
   padding: 14px;
 }
@@ -499,7 +555,9 @@ code {
 
   .hero,
   .launch-strip,
+  .install-flow,
   .scoreboard,
+  .publisher-loop,
   .two-column,
   .form-grid,
   .placement-grid {
