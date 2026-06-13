@@ -388,10 +388,14 @@ Immediate product response:
 
 Reply status:
 
-- Do not send the external reply until explicitly approved.
-- Recommended reply should confirm:
-  - yes, BuilderPerks is for Claude Code status line and similar terminal/IDE/agent surfaces;
-  - yes, EthicalAds would be the demand-side partner;
-  - revenue share is estimated/unpaid until approved advertiser revenue exists;
-  - keyword-only targeting is the preferred first pilot path;
-  - ask for the next technical/API approval step or a calendar call.
+- Reply sent after Jake provided directive keyword in Telegram.
+- Evidence:
+  - `/Volumes/X10/clawd/shared/status/builderperks-ethicalads-reply-compose-20260612-2215.png`
+  - `/Volumes/X10/clawd/shared/status/builderperks-ethicalads-reply-sent-20260612-2215.png`
+- Reply confirmed:
+  - BuilderPerks is for Claude Code status-line style surfaces plus similar terminal, IDE, extension, and agent UIs.
+  - EthicalAds is the desired demand-side advertiser partner.
+  - Revenue share remains estimated/unpaid until approved advertiser revenue and payout rails are in place.
+  - Broad keyword-only targeting is the preferred first pilot path.
+  - `/api/ad-stream` now supports sanitized keywords, category hints, and `format=statusline`.
+  - Asked whether the next step should be a short technical spec/sample traffic shape or booking David's calendar.
