@@ -513,6 +513,43 @@ Next:
 - Monitor Gmail for replies from DEV, TLDR, Raycast, daily.dev, plus the previous outbound waves.
 - If any channel replies with pricing or a next-step form, turn it into a small test decision packet before spending.
 - If no replies, next best embedded action is direct OSS/template maintainer outreach, not another provider blast.
+
+## 2026-06-13 03:52 ET
+
+Setup and flow QA pass completed after Jake asked to ensure no bugs and easy setup.
+
+Finding fixed:
+
+- `npm run build` dirtied the tracked Chrome extension ZIP because the custom ZIP writer used the current timestamp.
+- First deterministic fix still differed between local and Netlify because local used EDT and Netlify used UTC.
+- Final fix writes ZIP DOS timestamps from UTC fields, so local and production builds now match byte-for-byte.
+
+Deployment:
+
+- Production deploy: `6a2d0bc0b1ed24e7e577eeec`
+- Fix commits pushed: `4ce44eb`, `2923bad`
+- Live URL: `https://builderperks.netlify.app`
+
+Verification:
+
+- `npm run check` passed.
+- `npm run build` twice produced the same ZIP hash.
+- `npm run smoke` passed.
+- `unzip -t public/builderperks-extension-beta.zip` passed.
+- Production HTML contains builder path, 60-second demo, download CTA, and publisher registration CTA.
+- Production ZIP downloads and passes `unzip -t`.
+- Production ZIP hash: `443a1959e91ccf06c58b60ee6d0b4ae21b530ae9a014ec6c0a4dd728e4228b74`.
+- Production API stats healthy after QA: `4` publishers, `19` impressions, `$0.69` estimated publisher earnings.
+- Publisher registration endpoint succeeded with active publisher `pub-mqc1vaou-c10a664c`.
+- Registered publisher ad-stream returned a real Neon sponsored status-line placement.
+- Production admin endpoint rejects the demo key with `401`, which is expected security behavior.
+- Desktop screenshot: `/Volumes/X10/clawd/shared/status/builderperks-qa-desktop-20260613-0346.png`
+- Mobile screenshot: `/Volumes/X10/clawd/shared/status/builderperks-qa-mobile-20260613-0348.png`
+- Netlify deploy validation scanned `103` files and found no secret matches.
+
+Remaining note:
+
+- Local Netlify dev did not bind to `localhost:8888` during this pass, so admin-gated smoke was not rerun locally. Production admin unauthorized behavior was verified; production admin mutation was intentionally not run from this specific message without a fresh keyword.
 - Missing-publisher helper run exited `0` quietly.
 
 Deploy verification:
