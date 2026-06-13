@@ -452,3 +452,12 @@ Verification:
 - `npm run check` passed.
 - `npm run smoke` passed.
 - Missing-publisher helper run exited `0` quietly.
+
+Deploy verification:
+
+- Commit: `8a10a53` (`Add one-command publisher status-line install`).
+- Netlify deploy: `6a2cc75488b83fe26d083d5f`.
+- Live page contains the one-command install and status-line run commands.
+- Live `/install-statusline.sh` and `/builderperks-statusline.sh` both fetch successfully.
+- Temporary install test succeeded against production using publisher `pub-mqboquuy-956a54e1`.
+- Production helper output printed a real sponsored line for Neon with a tracked BuilderPerks click URL.
