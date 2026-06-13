@@ -35,16 +35,62 @@
             estimated revenue toward offsetting tooling bills.
           </p>
           <div class="actions">
-            <a class="button primary" href="/builderperks-extension-beta.zip">Download beta ZIP</a>
-            <a class="button" href="#builders">Join builder pool</a>
-            <a class="button" href="#feedback">Give tester feedback</a>
-            <a class="button" href="#advertiser">Reserve $250 pilot</a>
+            <a class="button primary" href="#builder-path">I'm a builder</a>
+            <a class="button" href="#advertiser-path">I'm an advertiser</a>
+            <a class="button" href="#publisher-path">I publish a devtool</a>
           </div>
         </div>
         <aside class="hero-panel" aria-label="Live unit preview">
           <div class="wait-label">Claude is thinking...</div>
           <div id="hero-card" class="placement-card compact"></div>
         </aside>
+      </section>
+
+      <section class="band path-router" aria-label="Choose your BuilderPerks path">
+        <article id="builder-path">
+          <p class="eyebrow">Builder</p>
+          <h2>Try one useful perk, then tell us if it belongs in your workflow.</h2>
+          <p>Best for Claude, ChatGPT, Cursor, v0, Replit, and Lovable builders who want relevant credits and tools without fake paid clicks.</p>
+          <a class="button primary" href="#demo">See the card first</a>
+        </article>
+        <article id="advertiser-path">
+          <p class="eyebrow">Advertiser</p>
+          <h2>Run a small manually approved pilot before a bigger buy.</h2>
+          <p>Best for devtools, APIs, hosting, database, observability, auth, and AI tools that want proof from real build moments.</p>
+          <a class="button primary" href="#advertiser">Reserve pilot</a>
+        </article>
+        <article id="publisher-path">
+          <p class="eyebrow">Publisher</p>
+          <h2>Add one controlled sponsor line to a CLI, template, IDE, or agent UI.</h2>
+          <p>Best for maintainers and products that already reach builders and want a simple opt-in sponsor surface.</p>
+          <a class="button primary" href="#api">Register surface</a>
+        </article>
+      </section>
+
+      <section id="demo" class="band demo-flow" aria-label="BuilderPerks demo">
+        <div>
+          <p class="eyebrow">60-second demo</p>
+          <h2>See the experience before installing the unpacked beta.</h2>
+          <p>
+            A card appears only during supported AI wait states or publisher surfaces. It explains why it matched,
+            stays labeled, and gives the builder control before any broader rollout.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="/builderperks-extension-beta.zip">Download beta ZIP</a>
+            <a class="button" href="#feedback">Report first-session feedback</a>
+          </div>
+        </div>
+        <div class="demo-card" aria-label="Sample BuilderPerks card controls">
+          <small>Sponsored devtool perk</small>
+          <h3>$500 credits for a Postgres-backed AI app</h3>
+          <p>Matched because this session looks like database, deployment, and AI app work.</p>
+          <div class="demo-controls">
+            <span>Need this</span>
+            <span>Not relevant</span>
+            <span>Hide category</span>
+            <span>Pause today</span>
+          </div>
+        </div>
       </section>
 
       <section class="band launch-strip" aria-label="Today launch sprint">
@@ -118,7 +164,7 @@
         <div class="section-head">
           <p class="eyebrow">Advertiser workflow</p>
           <h2>Reserve a $250 launch pilot</h2>
-          <p>Submit the card. We approve it. It appears in the live feed and extension while we collect claims and feedback.</p>
+          <p>Start with your company URL and work email. If you do not have the perfect copy yet, submit a rough offer and we will help draft the card before anything goes live.</p>
         </div>
 
         <form id="placement-form" class="form-grid">
@@ -144,7 +190,7 @@
           </label>
           <label class="wide">
             Offer body
-            <textarea name="body" required maxlength="260" placeholder="Tell builders exactly what they get and why it matters now."></textarea>
+            <textarea name="body" required maxlength="260" placeholder="Rough is fine. We can help write the final card before approval."></textarea>
           </label>
           <label>
             CTA
@@ -154,6 +200,9 @@
             Audience
             <input name="audience" required placeholder="AI app builders" />
           </label>
+          <p class="assisted-note wide">
+            Assisted pilot: every placement is manually reviewed, lightly edited if needed, and reported with impressions, clicks, claims, and relevance actions.
+          </p>
           <fieldset class="wide packages">
             <legend>Package</legend>
             <label><input type="radio" name="packageId" value="starter" checked /> Starter, $250</label>
@@ -228,22 +277,28 @@
           </p>
           <div class="api-steps">
             <div>1. Register a publisher surface.</div>
-            <div>2. Install the status-line helper with one command.</div>
-            <div>3. Run it from your terminal, IDE, Claude Code status line, or agent UI.</div>
+            <div>2. Install the status-line helper with one command; it saves your publisher id locally.</div>
+            <div>3. Run <code>~/.builderperks/statusline.sh</code> from your terminal, IDE, Claude Code status line, or agent UI.</div>
+            <div>4. Verify setup with <code>BUILDERPERKS_DEBUG=1 ~/.builderperks/statusline.sh</code> if the line is blank.</div>
           </div>
           <pre class="code-sample"><code>curl -X POST https://builderperks.netlify.app/api/publishers \
   -H "content-type: application/json" \
   -d '{"name":"My CLI","email":"founder@example.com","surface":"terminal"}'</code></pre>
           <pre class="code-sample"><code>curl -fsSL https://builderperks.netlify.app/install-statusline.sh | bash -s -- pub_x</code></pre>
-          <pre class="code-sample"><code>BUILDERPERKS_PUBLISHER_ID=pub_x BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling BUILDERPERKS_BLOCKED_CATEGORIES=adult,gambling BUILDERPERKS_VALUE_MODE=relevant ~/.builderperks/statusline.sh</code></pre>
+          <pre class="code-sample"><code>~/.builderperks/statusline.sh</code></pre>
+          <pre class="code-sample"><code>BUILDERPERKS_DEBUG=1 ~/.builderperks/statusline.sh</code></pre>
+          <pre class="code-sample"><code>"statusLine": { "type": "command", "command": "~/.builderperks/statusline.sh" }</code></pre>
           <pre class="code-sample"><code>curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&blockedKeywords=crypto,gambling&blockedCategories=adult,gambling&valueMode=relevant&format=statusline"</code></pre>
           <p class="fine-print">
             For targeting, send broad programming language, framework, and project keywords only.
             Use <code>valueMode</code> for passive, relevant, or high-value discovery. Use
             <code>allowedCategories</code> for explicit opt-ins and <code>blockedCategories</code> for ad
             groups you do not want in your workflow.
+            The installer writes <code>~/.builderperks/config.env</code> with your publisher id and safe defaults.
+            You can still override a single run with variables such as <code>BUILDERPERKS_VALUE_MODE</code>.
             Do not send personal data or full prompts. The helper fails quietly if the network or API is down,
-            so it will not break a prompt, terminal, or status-line workflow. Terminal publishers can use
+            so it will not break a prompt, terminal, or status-line workflow. Use <code>BUILDERPERKS_DEBUG=1</code>
+            only when verifying setup; diagnostics go to stderr. Terminal publishers can use
             `format=statusline` and render the returned `render.statusLine` value directly. IDE and agent UIs
             can use `render.ideCard`; Markdown surfaces can use `render.markdown`.
           </p>
@@ -265,6 +320,21 @@
             Payout handle
             <input name="payoutHandle" placeholder="Stripe email or manual invoice contact" />
           </label>
+          <fieldset class="wide packages">
+            <legend>Surface preset</legend>
+            <label><input type="radio" name="surfacePreset" value="terminal" checked /> Terminal status line</label>
+            <label><input type="radio" name="surfacePreset" value="ide" /> IDE or plugin</label>
+            <label><input type="radio" name="surfacePreset" value="agent" /> Agent UI</label>
+            <label><input type="radio" name="surfacePreset" value="template" /> Template or README</label>
+          </fieldset>
+          <fieldset class="wide packages">
+            <legend>Allowed topics</legend>
+            <label><input type="checkbox" name="allowedTopics" value="hosting" checked /> Hosting</label>
+            <label><input type="checkbox" name="allowedTopics" value="database" checked /> Database</label>
+            <label><input type="checkbox" name="allowedTopics" value="observability" checked /> Observability</label>
+            <label><input type="checkbox" name="allowedTopics" value="ai-apis" checked /> AI APIs</label>
+            <label><input type="checkbox" name="allowedTopics" value="browser-automation" /> Browser automation</label>
+          </fieldset>
           <button class="button primary wide" type="submit">Register publisher surface</button>
           <div id="publisher-status" class="status wide" role="status"></div>
         </form>
@@ -350,7 +420,7 @@
         </form>
       </section>
 
-      <section id="admin" class="band">
+      <section id="admin" class="band admin-section" hidden>
         <div class="section-head">
           <p class="eyebrow">Admin</p>
           <h2>Approve pending buys</h2>

@@ -137,6 +137,8 @@ main {
 }
 
 .hero > *,
+.path-router > *,
+.demo-flow > *,
 .launch-strip > *,
 .install-flow > *,
 .scoreboard > *,
@@ -154,6 +156,90 @@ main {
   box-shadow: 0 22px 70px rgba(23, 23, 23, 0.18);
   color: white;
   padding: 22px;
+}
+
+.path-router {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.path-router article,
+.demo-card,
+.assisted-note {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.path-router article {
+  display: grid;
+  gap: 12px;
+  min-height: 278px;
+  padding: 18px;
+}
+
+.path-router h2,
+.demo-flow h2 {
+  font-size: 28px;
+  letter-spacing: 0;
+  line-height: 1.08;
+  margin: 0;
+}
+
+.path-router p,
+.demo-flow p {
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.path-router .button {
+  align-self: end;
+}
+
+.demo-flow {
+  align-items: center;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.75fr);
+}
+
+.demo-card {
+  display: grid;
+  gap: 12px;
+  min-height: 270px;
+  padding: 20px;
+}
+
+.demo-card small {
+  color: var(--accent-dark);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.demo-card h3 {
+  font-size: 26px;
+  letter-spacing: 0;
+  line-height: 1.08;
+  margin: 0;
+}
+
+.demo-controls {
+  align-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo-controls span {
+  background: rgba(29, 78, 216, 0.08);
+  border: 1px solid rgba(29, 78, 216, 0.16);
+  border-radius: 999px;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 900;
+  padding: 7px 9px;
 }
 
 .wait-label {
@@ -403,6 +489,15 @@ textarea {
   min-height: auto;
 }
 
+.assisted-note {
+  color: var(--accent-dark);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.45;
+  margin: 0;
+  padding: 12px 14px;
+}
+
 .placement-grid {
   display: grid;
   gap: 16px;
@@ -506,6 +601,17 @@ textarea {
   min-height: 22px;
 }
 
+.command-block {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.command-block strong {
+  color: var(--accent-dark);
+  font-size: 13px;
+}
+
 .fine-print {
   color: var(--muted);
   font-size: 13px !important;
@@ -554,6 +660,8 @@ code {
   }
 
   .hero,
+  .path-router,
+  .demo-flow,
   .launch-strip,
   .install-flow,
   .scoreboard,
