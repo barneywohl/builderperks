@@ -114,6 +114,18 @@ The best immediate API is BuilderPerks' own:
 
 This gives us the integration surface and usage proof. External ad networks should be treated as demand partners or ad-server vendors after we can show real publisher supply.
 
+## Cold-Start Demand Architecture
+
+BuilderPerks should not represent third-party network ads as active until the network approves the inventory.
+The compliant cold-start path is a transparent demand waterfall:
+
+1. `builderperks_seed` placements keep the publisher experience functional while supply is tiny.
+2. Manually approved `direct_advertiser` placements become the first paid demand source.
+3. `approved_partner` demand is enabled only after EthicalAds, BuySellAds/Carbon, AdButler, or Kevel approves the placement and traffic shape.
+
+The `/api/ad-stream` response now includes a `demand` object so publishers, advertisers, and partner reviewers can see whether an ad came from seed/direct demand or an approved partner.
+This avoids fake arbitrage, incentivized ad-network traffic, or hidden third-party pass-through before approval.
+
 ## Next Actions
 
 1. Fix Netlify account credit/billing blocker so the pushed API can deploy.

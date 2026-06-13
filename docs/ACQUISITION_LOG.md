@@ -461,3 +461,24 @@ Deploy verification:
 - Live `/install-statusline.sh` and `/builderperks-statusline.sh` both fetch successfully.
 - Temporary install test succeeded against production using publisher `pub-mqboquuy-956a54e1`.
 - Production helper output printed a real sponsored line for Neon with a tracked BuilderPerks click URL.
+
+## 2026-06-12 23:02 ET
+
+Cold-start demand clarity added locally for the next deploy.
+
+Decision:
+
+- Do not pipe unapproved third-party ads into paid terminal/IDE users.
+- Keep users seeing ads through `builderperks_seed` and manually approved direct placements until an external partner approves the inventory.
+- Treat EthicalAds, BuySellAds/Carbon, AdButler, and Kevel as pending partner integrations, not active demand.
+
+Product change:
+
+- `/api/ad-stream` now returns a `demand` object showing the active demand source, pending partner integrations, and the approval boundary.
+- Seed placements are explicitly marked `builderperks_seed`.
+
+Why it matters:
+
+- Publishers can try the product now and see working ads.
+- Advertisers see honest usage proof.
+- External ad partners get a clean, compliant pilot shape instead of hidden pass-through.

@@ -21,6 +21,8 @@ export type Placement = {
   budgetUsd: number;
   targetTools: string[];
   paymentStatus: "invoice_requested" | "checkout_ready" | "paid";
+  demandSource?: "builderperks_seed" | "direct_advertiser" | "approved_partner";
+  demandPartner?: string;
   checkoutSessionId?: string;
 };
 
@@ -109,7 +111,8 @@ const initialState: State = {
       packageId: "starter",
       budgetUsd: 250,
       targetTools: ["Claude", "ChatGPT", "Cursor"],
-      paymentStatus: "paid"
+      paymentStatus: "paid",
+      demandSource: "builderperks_seed"
     },
     {
       id: "seed-neon",
@@ -127,7 +130,8 @@ const initialState: State = {
       packageId: "starter",
       budgetUsd: 250,
       targetTools: ["Claude", "ChatGPT", "v0"],
-      paymentStatus: "paid"
+      paymentStatus: "paid",
+      demandSource: "builderperks_seed"
     }
   ],
   claims: [],

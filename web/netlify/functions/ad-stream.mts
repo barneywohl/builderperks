@@ -2,6 +2,20 @@ import type { Config } from "@netlify/functions";
 import { badRequest, cleanText, id, json, readState, siteUrl, writeState, type Impression, type Placement } from "./_data.mjs";
 
 const DEFAULT_PUBLISHER_EARNINGS_USD = 0.02;
+function demandSourceForPlacement(placement: Placement) {
+  return placement.demandSource ?? (placement.id.startsWith("seed-") ? "builderperks_seed" : "direct_advertiser");
+}
+
+function demandStatusForPlacement(placement: Placement) {
+  const activeSource = demandSourceForPlacement(placement);
+  return {
+    activeSource,
+    activeSourceLabel: "BuilderPerks seed/direct approved placements",
+    approvedPartnerIntegrations: [] as string[],
+    pendingPartnerIntegrations: ["EthicalAds", "BuySellAds/Carbon", "AdButler", "Kevel"],
+    note: "Cold-start ads come from BuilderPerks seed or manually approved direct placements until an external demand partner approves terminal/IDE inventory."
+  };
+}
 const CATEGORY_TERMS: Record<string, string[]> = {
   hosting: ["deploy", "deployment", "hosting", "infra", "railway", "vercel", "render", "server"],
   database: ["postgres", "database", "db", "sql", "neon", "supabase", "prisma"],
@@ -100,6 +114,11 @@ export default async (req: Request) => {
       estimatedPublisherEarningsUsd: impression.estimatedPublisherEarningsUsd,
       payoutStatus: "estimated_unpaid",
       note: "No automatic payouts are made until advertiser revenue and payout rails are approved."
+    },
+    demand: {
+      source: demandSourceForPlacement(placement),
+      partner: placement.demandPartner ?? null,
+      ...demandStatusForPlacement(placement)
     },
     targeting: {
       keywords,

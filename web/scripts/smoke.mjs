@@ -30,6 +30,8 @@ assert.match(await readFile("netlify/functions/placements.mts", "utf8"), /checko
 assert.match(await readFile("netlify/functions/builders.mts", "utf8"), /BuilderSignup/);
 assert.match(await readFile("netlify/functions/publishers.mts", "utf8"), /Publisher/);
 assert.match(await readFile("netlify/functions/ad-stream.mts", "utf8"), /estimatedPublisherEarningsUsd/);
+assert.match(await readFile("netlify/functions/ad-stream.mts", "utf8"), /demandStatusForPlacement/);
+assert.match(await readFile("netlify/functions/ad-stream.mts", "utf8"), /builderperks_seed/);
 assert.match(css, /placement-card/);
 assert.match(css, /impact-meter/);
 assert.match(css, /score-grid/);
