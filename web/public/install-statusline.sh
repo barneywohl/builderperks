@@ -25,10 +25,15 @@ BuilderPerks status-line helper installed:
   $INSTALL_DIR/statusline.sh
 
 Test it:
-  BUILDERPERKS_PUBLISHER_ID=$PUBLISHER_ID BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling $INSTALL_DIR/statusline.sh
+  BUILDERPERKS_PUBLISHER_ID=$PUBLISHER_ID BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling BUILDERPERKS_VALUE_MODE=passive $INSTALL_DIR/statusline.sh
 
 Claude Code statusLine command:
-  BUILDERPERKS_PUBLISHER_ID=$PUBLISHER_ID BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling $INSTALL_DIR/statusline.sh
+  BUILDERPERKS_PUBLISHER_ID=$PUBLISHER_ID BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling BUILDERPERKS_VALUE_MODE=passive $INSTALL_DIR/statusline.sh
 
-This sends only broad preference keywords you choose. It does not send prompts or personal data.
+Optional controls:
+  BUILDERPERKS_VALUE_MODE=relevant          # passive, relevant, high_value
+  BUILDERPERKS_ALLOWED_CATEGORIES=finance  # explicit opt-in only
+  BUILDERPERKS_BLOCKED_CATEGORIES=adult,gambling
+
+This sends only broad preference keywords and category choices you choose. It does not send prompts or personal data.
 EOF

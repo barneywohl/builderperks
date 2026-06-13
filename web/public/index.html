@@ -82,14 +82,14 @@
           <h2>Make the sponsored line feel earned, controlled, and useful.</h2>
           <p>
             This is not paid-to-watch traffic. Publishers opt in, choose broad keywords, show one labeled
-            devtool offer, and build verified usage that can turn into approved revenue share.
+            devtool offer, choose category/value modes, and build verified usage that can turn into approved revenue share.
           </p>
         </div>
         <div class="reward-grid">
           <div><strong>1</strong><span>Opt in with one command</span></div>
           <div><strong>2</strong><span>Send broad keywords only</span></div>
-          <div><strong>3</strong><span>Show one respectful sponsor line</span></div>
-          <div><strong>4</strong><span>Track estimated revenue and proof</span></div>
+          <div><strong>3</strong><span>Choose category and value mode</span></div>
+          <div><strong>4</strong><span>Show one respectful sponsor line</span></div>
         </div>
       </section>
 
@@ -214,11 +214,13 @@
   -H "content-type: application/json" \
   -d '{"name":"My CLI","email":"founder@example.com","surface":"terminal"}'</code></pre>
           <pre class="code-sample"><code>curl -fsSL https://builderperks.netlify.app/install-statusline.sh | bash -s -- pub_x</code></pre>
-          <pre class="code-sample"><code>BUILDERPERKS_PUBLISHER_ID=pub_x BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling ~/.builderperks/statusline.sh</code></pre>
-          <pre class="code-sample"><code>curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&blockedKeywords=crypto,gambling&format=statusline"</code></pre>
+          <pre class="code-sample"><code>BUILDERPERKS_PUBLISHER_ID=pub_x BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling BUILDERPERKS_BLOCKED_CATEGORIES=adult,gambling BUILDERPERKS_VALUE_MODE=relevant ~/.builderperks/statusline.sh</code></pre>
+          <pre class="code-sample"><code>curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&blockedKeywords=crypto,gambling&blockedCategories=adult,gambling&valueMode=relevant&format=statusline"</code></pre>
           <p class="fine-print">
             For targeting, send broad programming language, framework, and project keywords only.
-            Use <code>blockedKeywords</code> for ad types you do not want in your workflow.
+            Use <code>valueMode</code> for passive, relevant, or high-value discovery. Use
+            <code>allowedCategories</code> for explicit opt-ins and <code>blockedCategories</code> for ad
+            groups you do not want in your workflow.
             Do not send personal data or full prompts. The helper fails quietly if the network or API is down,
             so it will not break a prompt, terminal, or status-line workflow. Terminal publishers can use
             `format=statusline` and render the returned `render.statusLine` value directly. IDE and agent UIs

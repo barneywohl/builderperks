@@ -16,6 +16,32 @@ Best path:
 4. Approach BuySellAds/Carbon with evidence that we have developer-native supply.
 5. Use AdButler or Kevel only if we need ad-server infrastructure before BuySellAds/Carbon is available.
 
+## Category Value Strategy
+
+Jake's key product insight is right: online ad value varies massively by category, and publishers should benefit when they intentionally opt into higher-value discovery. BuilderPerks should expose this as user-controlled category/value modes, not as a hidden feed.
+
+Shipped primitive:
+
+- `valueMode=passive|relevant|high_value`
+- `allowedCategories=finance,legal,...` for explicit opt-in
+- `blockedCategories=adult,gambling,...` for category-level blocks
+- `marketplace.categoryProfiles` in `/api/ad-stream`, including value tier, estimated publisher revenue, provider lane, and compliance note
+- Restricted and regulated categories are not default-eligible.
+
+Category posture:
+
+- Default developer categories: hosting, database, observability, testing, AI, auth, analytics.
+- Regulated opt-in categories: finance, legal, health.
+- Restricted opt-in categories: gambling, adult.
+
+Provider posture:
+
+- Developer categories should go first through direct advertisers, EthicalAds, BuySellAds/Carbon, and developer-native campaigns.
+- Regulated categories require approved advertisers, disclosures, and partner support before any payout claims.
+- Restricted categories require a separate compliance program and should not appear in default terminal/IDE workflows.
+
+This preserves the 199x wedge: publishers control what they are willing to host, higher-value categories can carry higher estimated revenue share, and the system remains legible enough for serious ad partners to approve.
+
 ## Ranked Options
 
 ### 1. BuySellAds / Carbon Ads - best demand partner to pursue

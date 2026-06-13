@@ -48,6 +48,24 @@ assert.equal(created.data.placement.company.includes("<script>"), true);
 
 const placementId = created.data.placement.id;
 
+const financeCreated = await request("/api/placements", {
+  method: "POST",
+  body: JSON.stringify({
+    company: "BuilderPerks Finance Pilot",
+    contactName: "Smoke",
+    email: "finance-smoke@example.com",
+    url: "https://example.com/builderperks-finance-smoke",
+    headline: "Finance API credits for tax and banking workflows",
+    body: "Credit, banking, insurance, and accounting tools for regulated builder workflows",
+    cta: "Review finance pilot",
+    audience: "Finance app builders",
+    packageId: "starter",
+    targetTools: ["Claude", "Cursor"]
+  })
+});
+assert.equal(financeCreated.response.status, 201);
+const financePlacementId = financeCreated.data.placement.id;
+
 const approved = await request("/api/admin", {
   method: "POST",
   headers: { "x-admin-key": adminKey },
@@ -57,6 +75,15 @@ assert.equal(approved.response.status, 200);
 assert.equal(approved.data.ok, true);
 assert.equal(approved.data.placement.status, "approved");
 assert.equal(approved.data.placement.paymentStatus, "paid");
+
+const financeApproved = await request("/api/admin", {
+  method: "POST",
+  headers: { "x-admin-key": adminKey },
+  body: JSON.stringify({ placementId: financePlacementId, status: "approved", paymentStatus: "paid" })
+});
+assert.equal(financeApproved.response.status, 200);
+assert.equal(financeApproved.data.ok, true);
+assert.equal(financeApproved.data.placement.status, "approved");
 
 const tracked = await fetch(`${baseUrl}/api/track?placementId=${encodeURIComponent(placementId)}&source=api-smoke`, {
   redirect: "manual"
@@ -112,5 +139,25 @@ assert.match(streamed.data.render.terminalLine, /^Sponsored:/);
 assert.match(streamed.data.render.markdown, /^\*\*Sponsored:/);
 assert.equal(streamed.data.render.ideCard.actionUrl, streamed.data.ad.clickUrl);
 assert.equal(streamed.data.revenueShare.payoutStatus, "estimated_unpaid");
+assert.equal(streamed.data.marketplace.valueMode, "passive");
+assert.ok(streamed.data.marketplace.providerLanes.includes("developer_network"));
 
-console.log(`api smoke ok: ${placementId} approved, tracked, claimed, and reported`);
+const financeDefault = await request(`/api/ad-stream?publisherId=${encodeURIComponent(publisher.data.publisher.id)}&surface=terminal&context=finance%20tax%20banking&keywords=finance,banking,credit&format=statusline`);
+assert.equal(financeDefault.response.status, 200);
+assert.equal(financeDefault.data.ok, true);
+assert.notEqual(financeDefault.data.ad?.placementId, financePlacementId);
+
+const financeOptIn = await request(`/api/ad-stream?publisherId=${encodeURIComponent(publisher.data.publisher.id)}&surface=terminal&context=finance%20tax%20banking&keywords=finance,banking,credit&allowedCategories=finance&valueMode=high_value&format=statusline`);
+assert.equal(financeOptIn.response.status, 200);
+assert.equal(financeOptIn.data.ok, true);
+assert.equal(financeOptIn.data.ad.placementId, financePlacementId);
+assert.equal(financeOptIn.data.marketplace.valueMode, "high_value");
+assert.ok(financeOptIn.data.marketplace.providerLanes.includes("regulated_partner"));
+assert.ok(financeOptIn.data.revenueShare.estimatedPublisherEarningsUsd > streamed.data.revenueShare.estimatedPublisherEarningsUsd);
+
+const blockedDatabase = await request(`/api/ad-stream?publisherId=${encodeURIComponent(publisher.data.publisher.id)}&surface=terminal&context=postgres&keywords=postgres&blockedCategories=database&format=statusline`);
+assert.equal(blockedDatabase.response.status, 200);
+assert.equal(blockedDatabase.data.ok, true);
+assert.notEqual(blockedDatabase.data.ad?.placementId, "seed-neon");
+
+console.log(`api smoke ok: ${placementId} and ${financePlacementId} approved, tracked, gated, opted in, and reported`);
