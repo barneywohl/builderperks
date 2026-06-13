@@ -38,15 +38,15 @@ function crc32(buffer) {
 }
 
 function dosDateTime(date = new Date()) {
-  const year = Math.max(date.getFullYear(), 1980);
+  const year = Math.max(date.getUTCFullYear(), 1980);
   const time =
-    (date.getHours() << 11) |
-    (date.getMinutes() << 5) |
-    Math.floor(date.getSeconds() / 2);
+    (date.getUTCHours() << 11) |
+    (date.getUTCMinutes() << 5) |
+    Math.floor(date.getUTCSeconds() / 2);
   const day =
     ((year - 1980) << 9) |
-    ((date.getMonth() + 1) << 5) |
-    date.getDate();
+    ((date.getUTCMonth() + 1) << 5) |
+    date.getUTCDate();
   return { time, day };
 }
 
