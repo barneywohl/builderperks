@@ -199,9 +199,9 @@ async function submitPublisher(event) {
       body: JSON.stringify(formData(event.currentTarget))
     });
     const publisherId = data.publisher.id;
-    const sampleUrl = `${window.location.origin}/api/ad-stream?publisherId=${encodeURIComponent(publisherId)}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&format=statusline`;
+    const sampleUrl = `${window.location.origin}/api/ad-stream?publisherId=${encodeURIComponent(publisherId)}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&blockedKeywords=crypto,gambling&format=statusline`;
     const installCommand = `curl -fsSL ${window.location.origin}/install-statusline.sh | bash -s -- ${publisherId}`;
-    const runCommand = `BUILDERPERKS_PUBLISHER_ID=${publisherId} BUILDERPERKS_KEYWORDS=typescript,react,postgres ~/.builderperks/statusline.sh`;
+    const runCommand = `BUILDERPERKS_PUBLISHER_ID=${publisherId} BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling ~/.builderperks/statusline.sh`;
     status.innerHTML = data.alreadyJoined
       ? `Already registered. Publisher id: <code>${escapeHtml(publisherId)}</code>. Install:<pre class="code-sample mini"><code>${escapeHtml(installCommand)}</code></pre>`
       : `Registered. Publisher id: <code>${escapeHtml(publisherId)}</code>. Install:<pre class="code-sample mini"><code>${escapeHtml(installCommand)}</code></pre>Run:<pre class="code-sample mini"><code>${escapeHtml(runCommand)}</code></pre>Raw API:<pre class="code-sample mini"><code>curl "${escapeHtml(sampleUrl)}"</code></pre>`;

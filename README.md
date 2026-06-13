@@ -51,11 +51,12 @@ Run from any terminal, IDE task, Claude Code status line, or agent shell:
 ```bash
 BUILDERPERKS_PUBLISHER_ID=pub_x \
 BUILDERPERKS_KEYWORDS=typescript,react,postgres \
+BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling \
 ~/.builderperks/statusline.sh
 ```
 
 The helper prints one labeled sponsored line and fails quietly if the network or API is down.
-It sends only broad keywords you choose. It does not send prompts or personal data.
+It sends only broad preference keywords you choose. It does not send prompts or personal data.
 Publisher earnings are estimated revenue share for hosting a respectful sponsored line, not payment for watching or clicking ads.
 
 Register a publisher surface:
@@ -69,11 +70,12 @@ curl -X POST https://builderperks.netlify.app/api/publishers \
 Stream a labeled sponsored card:
 
 ```bash
-curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&format=statusline"
+curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&blockedKeywords=crypto,gambling&format=statusline"
 ```
 
 Use the returned `ad` and `render` fields in your UI and route clicks through the returned `clickUrl`.
 Use `keywords` for broad programming language, framework, and project targeting only.
+Use `blockedKeywords` for categories or sponsors you do not want in the workflow.
 Do not send personal data or full prompts.
 Terminal publishers can render `render.statusLine` or `render.terminalLine` directly.
 IDE and agent UIs can render `render.ideCard`; Markdown surfaces can render `render.markdown`.

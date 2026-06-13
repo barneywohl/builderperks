@@ -41,6 +41,12 @@ function scorePlacement(placement: Placement, context: string, surface: string, 
   return terms.reduce((score, term) => score + (haystack.includes(term) ? 1 : 0), 0);
 }
 
+function matchesBlockedPreference(placement: Placement, blockedKeywords: string[]) {
+  if (!blockedKeywords.length) return false;
+  const haystack = `${placement.company} ${placement.headline} ${placement.body} ${placement.audience} ${placement.targetTools.join(" ")}`.toLowerCase();
+  return blockedKeywords.some((term) => haystack.includes(term));
+}
+
 function categoryHints(placement: Placement, keywords: string[]) {
   const haystack = `${placement.company} ${placement.headline} ${placement.body} ${placement.audience} ${placement.targetTools.join(" ")} ${keywords.join(" ")}`.toLowerCase();
   return Object.entries(CATEGORY_TERMS)
@@ -77,6 +83,7 @@ export default async (req: Request) => {
   const surface = cleanText(url.searchParams.get("surface"), "terminal");
   const context = cleanText(url.searchParams.get("context"), "AI builder workflow");
   const keywords = parseKeywords(cleanText(url.searchParams.get("keywords"), ""));
+  const blockedKeywords = parseKeywords(cleanText(url.searchParams.get("blockedKeywords") ?? url.searchParams.get("excludeKeywords"), ""));
   const format = cleanText(url.searchParams.get("format"), "card");
   if (!publisherId) return badRequest("publisherId is required");
 
@@ -87,7 +94,19 @@ export default async (req: Request) => {
   const approved = state.placements.filter((placement) => placement.status === "approved");
   if (!approved.length) return json({ ok: true, ad: null, reason: "no_approved_placements" });
 
-  const placement = [...approved].sort((a, b) => scorePlacement(b, context, surface, keywords) - scorePlacement(a, context, surface, keywords))[0];
+  const eligible = approved.filter((placement) => !matchesBlockedPreference(placement, blockedKeywords));
+  if (!eligible.length) return json({
+    ok: true,
+    ad: null,
+    reason: "no_approved_placements_after_preferences",
+    preferences: {
+      keywords,
+      blockedKeywords,
+      note: "Your blocked keywords filtered out every approved placement. Relax blockedKeywords to receive an ad."
+    }
+  });
+
+  const placement = [...eligible].sort((a, b) => scorePlacement(b, context, surface, keywords) - scorePlacement(a, context, surface, keywords))[0];
   const impression: Impression = {
     id: id("imp"),
     createdAt: new Date().toISOString(),
@@ -122,8 +141,14 @@ export default async (req: Request) => {
     },
     targeting: {
       keywords,
+      blockedKeywords,
       categories,
-      note: "Send broad programming language, framework, and project keywords only. Do not send personal data or full prompts."
+      note: "Send broad programming language, framework, project, and preference keywords only. Do not send personal data or full prompts."
+    },
+    preferences: {
+      wanted: keywords,
+      blocked: blockedKeywords,
+      note: "Publishers control ad fit with keywords and blockedKeywords. This is preference targeting, not personal profiling."
     },
     render: {
       format,

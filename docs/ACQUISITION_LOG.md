@@ -482,3 +482,26 @@ Why it matters:
 - Publishers can try the product now and see working ads.
 - Advertisers see honest usage proof.
 - External ad partners get a clean, compliant pilot shape instead of hidden pass-through.
+
+## 2026-06-12 23:14 ET
+
+Publisher ad preferences shipped locally for the next deploy.
+
+Insight:
+
+- The strongest simple user-control feature is letting the terminal/IDE publisher choose what kinds of sponsors feel acceptable.
+- This should be preference targeting, not personal profiling.
+
+Product change:
+
+- `/api/ad-stream` supports `blockedKeywords` and `excludeKeywords`.
+- The status-line helper supports `BUILDERPERKS_BLOCKED_KEYWORDS`.
+- The public onboarding examples now show wanted keywords and blocked keywords together.
+- If blocked keywords filter out every approved placement, the API returns `no_approved_placements_after_preferences` with a clear preference note.
+
+Verification:
+
+- `bash -n web/public/builderperks-statusline.sh web/public/install-statusline.sh` passed.
+- `npm run build` passed.
+- `npm run check` passed.
+- `npm run smoke` passed.

@@ -6,19 +6,20 @@ PUBLISHER_ID="${BUILDERPERKS_PUBLISHER_ID:-${1:-}}"
 SURFACE="${BUILDERPERKS_SURFACE:-terminal}"
 CONTEXT="${BUILDERPERKS_CONTEXT:-${PWD##*/} coding workflow}"
 KEYWORDS="${BUILDERPERKS_KEYWORDS:-}"
+BLOCKED_KEYWORDS="${BUILDERPERKS_BLOCKED_KEYWORDS:-}"
 FORMAT="${BUILDERPERKS_FORMAT:-statusline}"
 
 if [ -z "$PUBLISHER_ID" ]; then
   exit 0
 fi
 
-python3 - "$API_URL" "$PUBLISHER_ID" "$SURFACE" "$CONTEXT" "$KEYWORDS" "$FORMAT" <<'PY'
+python3 - "$API_URL" "$PUBLISHER_ID" "$SURFACE" "$CONTEXT" "$KEYWORDS" "$BLOCKED_KEYWORDS" "$FORMAT" <<'PY'
 import json
 import sys
 import urllib.parse
 import urllib.request
 
-api_url, publisher_id, surface, context, keywords, output_format = sys.argv[1:]
+api_url, publisher_id, surface, context, keywords, blocked_keywords, output_format = sys.argv[1:]
 params = {
     "publisherId": publisher_id,
     "surface": surface,
@@ -27,6 +28,8 @@ params = {
 }
 if keywords:
     params["keywords"] = keywords
+if blocked_keywords:
+    params["blockedKeywords"] = blocked_keywords
 
 url = api_url.rstrip("/") + "/api/ad-stream?" + urllib.parse.urlencode(params)
 

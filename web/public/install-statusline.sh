@@ -25,10 +25,10 @@ BuilderPerks status-line helper installed:
   $INSTALL_DIR/statusline.sh
 
 Test it:
-  BUILDERPERKS_PUBLISHER_ID=$PUBLISHER_ID BUILDERPERKS_KEYWORDS=typescript,react,postgres $INSTALL_DIR/statusline.sh
+  BUILDERPERKS_PUBLISHER_ID=$PUBLISHER_ID BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling $INSTALL_DIR/statusline.sh
 
 Claude Code statusLine command:
-  BUILDERPERKS_PUBLISHER_ID=$PUBLISHER_ID BUILDERPERKS_KEYWORDS=typescript,react,postgres $INSTALL_DIR/statusline.sh
+  BUILDERPERKS_PUBLISHER_ID=$PUBLISHER_ID BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling $INSTALL_DIR/statusline.sh
 
-This sends only broad keywords you choose. It does not send prompts or personal data.
+This sends only broad preference keywords you choose. It does not send prompts or personal data.
 EOF
