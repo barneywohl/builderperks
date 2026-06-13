@@ -35,8 +35,22 @@ function categoryHints(placement: Placement, keywords: string[]) {
     .slice(0, 4);
 }
 
-function statusLine(placement: Placement, clickUrl: string) {
-  return `Sponsored: ${placement.company} - ${placement.headline} | ${clickUrl}`;
+function renderVariants(placement: Placement, clickUrl: string, categories: string[]) {
+  const statusLine = `Sponsored: ${placement.company} - ${placement.headline} | ${clickUrl}`;
+  return {
+    statusLine,
+    terminalLine: statusLine,
+    markdown: `**Sponsored: ${placement.company}** - ${placement.headline}\\n${clickUrl}`,
+    ideCard: {
+      title: placement.headline,
+      subtitle: placement.company,
+      description: placement.body,
+      actionLabel: placement.cta,
+      actionUrl: clickUrl,
+      disclosure: "Sponsored BuilderPerks offer",
+      categories
+    }
+  };
 }
 
 export default async (req: Request) => {
@@ -94,7 +108,7 @@ export default async (req: Request) => {
     },
     render: {
       format,
-      statusLine: statusLine(placement, clickUrl)
+      ...renderVariants(placement, clickUrl, categories)
     },
     ad: {
       placementId: placement.id,

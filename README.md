@@ -57,7 +57,8 @@ curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=t
 Use the returned `card` fields in your UI and route clicks through the returned `clickUrl`.
 Use `keywords` for broad programming language, framework, and project targeting only.
 Do not send personal data or full prompts.
-Terminal publishers can use `format=statusline` and render `render.statusLine` directly.
+Terminal publishers can render `render.statusLine` or `render.terminalLine` directly.
+IDE and agent UIs can render `render.ideCard`; Markdown surfaces can render `render.markdown`.
 Publisher earnings are estimated and unpaid until advertiser revenue and payout rails are approved.
 
 ## KISS Scope

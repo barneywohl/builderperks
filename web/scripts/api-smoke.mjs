@@ -108,6 +108,9 @@ assert.deepEqual(streamed.data.targeting.keywords, ["typescript", "react", "post
 assert.ok(streamed.data.targeting.categories.includes("database"));
 assert.equal(streamed.data.render.format, "statusline");
 assert.match(streamed.data.render.statusLine, /^Sponsored:/);
+assert.match(streamed.data.render.terminalLine, /^Sponsored:/);
+assert.match(streamed.data.render.markdown, /^\*\*Sponsored:/);
+assert.equal(streamed.data.render.ideCard.actionUrl, streamed.data.ad.clickUrl);
 assert.equal(streamed.data.revenueShare.payoutStatus, "estimated_unpaid");
 
 console.log(`api smoke ok: ${placementId} approved, tracked, claimed, and reported`);
