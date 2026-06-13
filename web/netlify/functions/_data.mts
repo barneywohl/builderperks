@@ -77,6 +77,7 @@ export type Impression = {
   publisherId: string;
   surface: string;
   context: string;
+  keywords: string[];
   estimatedPublisherEarningsUsd: number;
 };
 

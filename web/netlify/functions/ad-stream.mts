@@ -3,9 +3,18 @@ import { badRequest, cleanText, id, json, readState, siteUrl, writeState, type I
 
 const DEFAULT_PUBLISHER_EARNINGS_USD = 0.02;
 
-function scorePlacement(placement: Placement, context: string, surface: string) {
+function parseKeywords(value: string) {
+  return [...new Set(value
+    .toLowerCase()
+    .split(/[^a-z0-9+#.-]+/)
+    .map((term) => term.trim())
+    .filter((term) => term.length > 1 && term.length <= 40))]
+    .slice(0, 12);
+}
+
+function scorePlacement(placement: Placement, context: string, surface: string, keywords: string[]) {
   const haystack = `${placement.company} ${placement.headline} ${placement.body} ${placement.audience} ${placement.targetTools.join(" ")}`.toLowerCase();
-  const terms = `${context} ${surface}`.toLowerCase().split(/[^a-z0-9]+/).filter((term) => term.length > 2);
+  const terms = [...parseKeywords(`${context} ${surface}`), ...keywords];
   return terms.reduce((score, term) => score + (haystack.includes(term) ? 1 : 0), 0);
 }
 
@@ -18,6 +27,7 @@ export default async (req: Request) => {
   const publisherId = cleanText(url.searchParams.get("publisherId"));
   const surface = cleanText(url.searchParams.get("surface"), "terminal");
   const context = cleanText(url.searchParams.get("context"), "AI builder workflow");
+  const keywords = parseKeywords(cleanText(url.searchParams.get("keywords"), ""));
   if (!publisherId) return badRequest("publisherId is required");
 
   const state = await readState();
@@ -27,7 +37,7 @@ export default async (req: Request) => {
   const approved = state.placements.filter((placement) => placement.status === "approved");
   if (!approved.length) return json({ ok: true, ad: null, reason: "no_approved_placements" });
 
-  const placement = [...approved].sort((a, b) => scorePlacement(b, context, surface) - scorePlacement(a, context, surface))[0];
+  const placement = [...approved].sort((a, b) => scorePlacement(b, context, surface, keywords) - scorePlacement(a, context, surface, keywords))[0];
   const impression: Impression = {
     id: id("imp"),
     createdAt: new Date().toISOString(),
@@ -35,6 +45,7 @@ export default async (req: Request) => {
     publisherId,
     surface,
     context,
+    keywords,
     estimatedPublisherEarningsUsd: DEFAULT_PUBLISHER_EARNINGS_USD
   };
 
@@ -52,6 +63,10 @@ export default async (req: Request) => {
       estimatedPublisherEarningsUsd: impression.estimatedPublisherEarningsUsd,
       payoutStatus: "estimated_unpaid",
       note: "No automatic payouts are made until advertiser revenue and payout rails are approved."
+    },
+    targeting: {
+      keywords,
+      note: "Send broad programming language, framework, and project keywords only. Do not send personal data or full prompts."
     },
     ad: {
       placementId: placement.id,

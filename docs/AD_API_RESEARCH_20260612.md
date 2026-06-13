@@ -121,3 +121,20 @@ This gives us the integration surface and usage proof. External ad networks shou
 3. Track real impressions/clicks/claims through BuilderPerks.
 4. Email BuySellAds/Carbon with the new API proof and ask about a pilot/ad-serving partnership.
 5. Keep payouts estimated/unpaid until advertiser revenue and payout rails are approved.
+
+## EthicalAds Response - 2026-06-12
+
+David Fischer from EthicalAds replied positively. Key points:
+
+- EthicalAds is already working on pilots with a few LLM-based publishers.
+- The BuilderPerks use case appears directionally relevant: Claude Code status line or similar surfaces, ads shown in coding workflows, and revenue share with publishers.
+- The main integration question is targeting.
+- Their current similar pilots use broad programming keywords related to the prompt/project.
+- They do not need personal data.
+- An embedding-based approach was mentioned as another possibility, but broad keywords are the simpler first step.
+
+Product implication:
+
+- `/api/ad-stream` should support privacy-safe `keywords` such as `typescript,react,postgres`.
+- BuilderPerks should not send full prompts or personal data to ad partners.
+- The reply should confirm status-line/similar surfaces, demand-side need, revenue-share intent, and keyword-only targeting as the preferred pilot path.

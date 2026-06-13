@@ -359,3 +359,37 @@ Verification:
 - `npm run check` passed.
 - `npm run smoke` passed.
 - `npm run smoke:api` was not run locally because `netlify dev` failed after restart with Netlify CLI unauthorized. Production API was verified directly instead.
+
+## 2026-06-12 21:38 ET
+
+EthicalAds replied to the publisher/API fit request.
+
+Evidence:
+
+- `/Volumes/X10/clawd/shared/status/builderperks-ethicalads-reply-20260612-2138.png`
+
+Summary:
+
+- David Fischer said EthicalAds is already working on pilots with a few LLM-based publishers.
+- He understood the BuilderPerks direction as Claude Code status line or similar surfaces showing ads to users with a publisher revenue-share model.
+- He asked whether BuilderPerks is looking to EthicalAds for demand-side advertisers.
+- He flagged targeting as the main open question.
+- He said broad programming language/framework/project keywords related to the prompt/project are useful and do not require personal data.
+- He mentioned prompt embeddings as another possible route, but broad keywords are the cleaner first integration path.
+
+Immediate product response:
+
+- Add optional `keywords` support to `/api/ad-stream`.
+- Store only sanitized short targeting keywords on impressions.
+- Return a targeting note telling publishers not to send personal data or full prompts.
+- Update the public API quickstart and README to show `keywords=typescript,react,postgres`.
+
+Reply status:
+
+- Do not send the external reply until explicitly approved.
+- Recommended reply should confirm:
+  - yes, BuilderPerks is for Claude Code status line and similar terminal/IDE/agent surfaces;
+  - yes, EthicalAds would be the demand-side partner;
+  - revenue share is estimated/unpaid until approved advertiser revenue exists;
+  - keyword-only targeting is the preferred first pilot path;
+  - ask for the next technical/API approval step or a calendar call.

@@ -401,6 +401,12 @@ textarea {
   min-height: 22px;
 }
 
+.fine-print {
+  color: var(--muted);
+  font-size: 13px !important;
+  line-height: 1.45;
+}
+
 .admin-list {
   display: grid;
   gap: 12px;
