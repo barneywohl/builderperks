@@ -483,6 +483,36 @@ Verification:
 - Production ZIP download passed `unzip -t`.
 - Production API stats healthy: `3` publishers, `18` impressions, `$0.63` estimated publisher earnings.
 - Netlify secret scan checked `103` files and found no matches.
+
+## 2026-06-13 03:46 ET
+
+Third narrow acquisition wave sent after Jake provided directive keyword.
+
+Decision:
+
+- Do not duplicate prior advertiser/provider sends.
+- Focus on new developer-distribution and publisher-surface paths: DEV, TLDR, Raycast, and daily.dev.
+- Use authenticated Gmail browser because Gmail API remains blocked by stale `invalid_grant`.
+
+Sent:
+
+| Segment | Target | Channel | Ask | Evidence |
+| --- | --- | --- | --- | --- |
+| Developer community / publisher-ad path | DEV, `partners@dev.to` | Gmail | Route BuilderPerks to DEV partnerships/ads for advertiser test or tutorial resource/perk line feedback. | `/Volumes/X10/clawd/shared/status/builderperks-growth-devto-partners-sent-20260613-0341.png` |
+| Developer newsletter acquisition | TLDR, `sponsors@tldr.tech` | Gmail | Small sponsorship test in TLDR Dev / AI / DevOps to recruit real builder testers. | `/Volumes/X10/clawd/shared/status/builderperks-growth-tldr-sponsor-sent-20260613-0343.png` |
+| Publisher surface / extension ecosystem | Raycast, `affiliates@raycast.com` | Gmail | Explore affiliate/perk partnership or extension README/support surface test. | `/Volumes/X10/clawd/shared/status/builderperks-growth-raycast-affiliates-sent-20260613-0344.png` |
+| Developer discovery / ads route | daily.dev, `hi@daily.dev` | Gmail | Route to daily.dev Ads/business contact for a small builder-test acquisition campaign. | `/Volumes/X10/clawd/shared/status/builderperks-growth-dailydev-sent-20260613-0346.png` |
+
+Notes:
+
+- daily.dev advertiser onboarding page loaded but did not expose a usable form in browser automation, so the official contact inbox was used for routing.
+- Frontdoor intake created follow-up mission `mission-20260613-073649-f4d5a0`; mission engine should own the next cycle.
+
+Next:
+
+- Monitor Gmail for replies from DEV, TLDR, Raycast, daily.dev, plus the previous outbound waves.
+- If any channel replies with pricing or a next-step form, turn it into a small test decision packet before spending.
+- If no replies, next best embedded action is direct OSS/template maintainer outreach, not another provider blast.
 - Missing-publisher helper run exited `0` quietly.
 
 Deploy verification:
