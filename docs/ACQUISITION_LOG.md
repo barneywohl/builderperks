@@ -653,3 +653,55 @@ Verification:
 - `npm run build` passed.
 - `npm run check` passed.
 - `npm run smoke` passed.
+
+## 2026-06-13 03:57 ET
+
+Publisher setup fine-tuning shipped and deployed.
+
+Problem found:
+
+- Publisher setup still required too much copy/paste and repeated inline env vars after install.
+- One live UI label said `Hide similar` while the tracking event is actually `hide_category`.
+
+Product change:
+
+- Installer now writes `~/.builderperks/config.env` with the publisher id and safe default preferences.
+- Publisher can run `~/.builderperks/statusline.sh` directly after install.
+- Status-line helper now loads saved config and supports `BUILDERPERKS_DEBUG=1` for setup diagnostics.
+- Publisher success screen now shows a clearer step-by-step install, test, and Claude Code `statusLine` setup path.
+- Public copy now says `Hide category`.
+
+Deploy:
+
+- Commit: `4446cba` (`Simplify BuilderPerks publisher setup`)
+- Netlify deploy: `6a2d0cd791b0232927877f07`
+- Live URL: `https://builderperks.netlify.app`
+
+Verification:
+
+- `bash -n web/public/install-statusline.sh web/public/builderperks-statusline.sh` passed.
+- Temporary install created `config.env` and set `0600` permissions.
+- Temporary status-line run printed a real live Neon placement with no stderr.
+- Debug run printed diagnostics to stderr and kept the status line on stdout.
+- `npm run check` passed.
+- `npm run build` passed.
+- `npm run smoke` passed.
+- `git diff --check` passed.
+- Live deploy contains `Hide category`, `BUILDERPERKS_DEBUG=1`, `~/.builderperks/config.env`, and the Claude Code setup snippet.
+
+Current live stats after the pass:
+
+```json
+{
+  "approvedPlacements": 2,
+  "pendingPlacements": 2,
+  "clicks": 7,
+  "claims": 0,
+  "relevanceEvents": 1,
+  "needThis": 1,
+  "builderSignups": 1,
+  "publishers": 4,
+  "adImpressions": 21,
+  "estimatedPublisherEarningsUsd": 0.81
+}
+```
