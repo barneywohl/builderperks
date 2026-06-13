@@ -187,18 +187,21 @@
           </p>
           <div class="api-steps">
             <div>1. Register a publisher surface.</div>
-            <div>2. Call the ad stream from your terminal, IDE, extension, or agent UI.</div>
-            <div>3. Render the labeled card and use the tracked click URL.</div>
+            <div>2. Install the status-line helper with one command.</div>
+            <div>3. Run it from your terminal, IDE, Claude Code status line, or agent UI.</div>
           </div>
           <pre class="code-sample"><code>curl -X POST https://builderperks.netlify.app/api/publishers \
   -H "content-type: application/json" \
   -d '{"name":"My CLI","email":"founder@example.com","surface":"terminal"}'</code></pre>
+          <pre class="code-sample"><code>curl -fsSL https://builderperks.netlify.app/install-statusline.sh | bash -s -- pub_x</code></pre>
+          <pre class="code-sample"><code>BUILDERPERKS_PUBLISHER_ID=pub_x BUILDERPERKS_KEYWORDS=typescript,react,postgres ~/.builderperks/statusline.sh</code></pre>
           <pre class="code-sample"><code>curl "https://builderperks.netlify.app/api/ad-stream?publisherId=pub_x&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&format=statusline"</code></pre>
           <p class="fine-print">
             For targeting, send broad programming language, framework, and project keywords only.
-            Do not send personal data or full prompts. Terminal publishers can use `format=statusline`
-            and render the returned `render.statusLine` value directly. IDE and agent UIs can use
-            `render.ideCard`; Markdown surfaces can use `render.markdown`.
+            Do not send personal data or full prompts. The helper fails quietly if the network or API is down,
+            so it will not break a prompt, terminal, or status-line workflow. Terminal publishers can use
+            `format=statusline` and render the returned `render.statusLine` value directly. IDE and agent UIs
+            can use `render.ideCard`; Markdown surfaces can use `render.markdown`.
           </p>
         </div>
         <form id="publisher-form" class="form-grid wide-panel">

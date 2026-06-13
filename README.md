@@ -40,6 +40,23 @@ Open an `Advertiser pilot interest` issue or use the live buy form.
 
 ## Publisher API Quickstart
 
+One-command terminal/status-line install:
+
+```bash
+curl -fsSL https://builderperks.netlify.app/install-statusline.sh | bash -s -- pub_x
+```
+
+Run from any terminal, IDE task, Claude Code status line, or agent shell:
+
+```bash
+BUILDERPERKS_PUBLISHER_ID=pub_x \
+BUILDERPERKS_KEYWORDS=typescript,react,postgres \
+~/.builderperks/statusline.sh
+```
+
+The helper prints one labeled sponsored line and fails quietly if the network or API is down.
+It sends only broad keywords you choose. It does not send prompts or personal data.
+
 Register a publisher surface:
 
 ```bash

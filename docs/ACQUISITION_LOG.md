@@ -424,3 +424,31 @@ Notes:
 - Messaging emphasized build-moment intent, privacy-safe broad keywords, no full prompts/personal data, and a simple API that renders terminal/status-line/IDE/agent formats.
 - This is a targeted proof-gathering wave, not a public launch.
 - Next checkpoint should monitor Gmail for replies and pursue 6 more status-line/terminal/IDE publisher prospects.
+
+## 2026-06-12 22:56 ET
+
+Publisher onboarding hardening shipped locally for the next deploy.
+
+Decision:
+
+- Keep the publisher side simple enough for a terminal/status-line/IDE user to try in one command.
+- Do not add a heavy SDK, dashboard dependency, prompt collection, wallet flow, or payout automation yet.
+- The first adoption ask should be: register, install a tiny helper, set broad keywords, and run one labeled sponsored line.
+
+Product changes:
+
+- Added `/install-statusline.sh` for one-command helper installation.
+- Added `/builderperks-statusline.sh` for terminal, IDE task, agent shell, and Claude Code status-line usage.
+- Helper requires only `BUILDERPERKS_PUBLISHER_ID`.
+- Helper accepts optional broad `BUILDERPERKS_KEYWORDS`.
+- Helper fails quietly if the network or API is down so it does not break a terminal/status-line workflow.
+- Updated live page and README copy around the simpler publisher flow.
+- Updated post-registration success state to give the exact install/run commands for the new publisher id.
+
+Verification:
+
+- `bash -n web/public/builderperks-statusline.sh web/public/install-statusline.sh` passed.
+- `npm run build` passed.
+- `npm run check` passed.
+- `npm run smoke` passed.
+- Missing-publisher helper run exited `0` quietly.
