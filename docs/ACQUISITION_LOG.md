@@ -451,6 +451,38 @@ Verification:
 - `npm run build` passed.
 - `npm run check` passed.
 - `npm run smoke` passed.
+
+## 2026-06-13 03:39 ET
+
+Conversion/onboarding pass shipped live.
+
+Product change:
+
+- Public hero now routes visitors by job: builder, advertiser, or publisher.
+- Added a 60-second demo before install so builders can see the card and controls first.
+- Advertiser pilot flow now accepts rough copy and frames the launch as an assisted, manually reviewed pilot.
+- Publisher registration now includes surface presets and allowed topic presets.
+- Public admin section is hidden from normal visitors.
+- Netlify build is now self-contained for `web/` uploads by including the extension source inside the web package and keeping the ZIP builder independent of the system `zip` binary.
+
+Deployment:
+
+- Production deploy: `6a2d0793fef10a490e36ea15`
+- Commit pushed: `8185c0c`
+- Live URL: `https://builderperks.netlify.app`
+- Evidence screenshot: `/Volumes/X10/clawd/shared/status/builderperks-conversion-pass-prod-desktop-20260613-0336.png`
+
+Verification:
+
+- `npm run check` passed.
+- `npm run build` passed.
+- `unzip -t public/builderperks-extension-beta.zip` passed.
+- `npm run smoke` passed.
+- `git diff --check` passed.
+- Production HTML contains the new path router, 60-second demo, assisted pilot copy, and publisher presets.
+- Production ZIP download passed `unzip -t`.
+- Production API stats healthy: `3` publishers, `18` impressions, `$0.63` estimated publisher earnings.
+- Netlify secret scan checked `103` files and found no matches.
 - Missing-publisher helper run exited `0` quietly.
 
 Deploy verification:
@@ -461,6 +493,55 @@ Deploy verification:
 - Live `/install-statusline.sh` and `/builderperks-statusline.sh` both fetch successfully.
 - Temporary install test succeeded against production using publisher `pub-mqboquuy-956a54e1`.
 - Production helper output printed a real sponsored line for Neon with a tracked BuilderPerks click URL.
+
+## 2026-06-13 02:14 ET
+
+Second narrow acquisition wave sent/submitted after Jake provided directive keyword.
+
+Decision:
+
+- Move from acquisition prep into controlled outbound.
+- Keep the wave narrow and high-fit: developer newsletter/publisher channels, the most relevant privacy-first ad/provider partner, and direct AI-builder advertiser prospects.
+- Do not broad-launch Product Hunt/HN/daily.dev yet; conversion proof and onboarding clarity are still the bottlenecks.
+
+Sent/submitted:
+
+| Segment | Target | Channel | Ask | Evidence |
+| --- | --- | --- | --- | --- |
+| Publisher / developer audience | console.dev, `hello@console.dev` | Gmail | Tool submission, small sponsor test, or positioning feedback for experienced developer audience. | `/Volumes/X10/clawd/shared/status/builderperks-growth-consoledev-sent-20260613-0207.png` |
+| Publisher / developer audience | Cooperpress, `sales@cooperpress.com` | Gmail | Small developer-newsletter test across JavaScript Weekly / Node Weekly / React Status / Frontend Focus. | `/Volumes/X10/clawd/shared/status/builderperks-growth-cooperpress-sent-20260613-0209.png` |
+| Demand-side ad/provider partner | EthicalAds, `ads@ethicalads.io` | Gmail | Sample traffic shape + privacy-safe keyword/category targeting follow-up; asked for technical spec, traffic/report packet, or short call. | `/Volumes/X10/clawd/shared/status/builderperks-growth-ethicalads-followup-sent-20260613-0210.png` |
+| Direct advertiser | Exa, `sales@exa.ai` | Gmail | AI-builder search/API intent pilot or routing to growth/partnership contact. | `/Volumes/X10/clawd/shared/status/builderperks-growth-exa-advertiser-sent-20260613-0212.png` |
+| Direct advertiser / partner | Browserbase | Website contact form | Small advertiser/partner pilot for agent/browser automation builders. | `/Volumes/X10/clawd/shared/status/builderperks-growth-browserbase-form-submitted-20260613-0214.png` |
+
+Current live stats after the wave:
+
+```json
+{
+  "approvedPlacements": 2,
+  "pendingPlacements": 0,
+  "clicks": 7,
+  "claims": 0,
+  "relevanceEvents": 1,
+  "needThis": 1,
+  "builderSignups": 1,
+  "publishers": 3,
+  "adImpressions": 18,
+  "estimatedPublisherEarningsUsd": 0.63
+}
+```
+
+Notes:
+
+- Gmail API token was stale (`invalid_grant`), so the send path used authenticated Gmail in the controlled Clawd browser.
+- `gog` remains authenticated for docs/drive/sheets only, not Gmail.
+- The product bottleneck remains onboarding clarity: split builder/advertiser/publisher paths and add demo/install guide before broad launch.
+
+Next:
+
+- Monitor Gmail for replies from console.dev, Cooperpress, EthicalAds, Exa, Browserbase, and prior outbound targets.
+- If any advertiser/provider replies positively, create or refine a matching placement/report packet immediately.
+- If no replies within the next checkpoint, send the next narrow wave to 5 publisher surfaces or improve the landing-page segmentation first.
 
 ## 2026-06-12 23:02 ET
 
