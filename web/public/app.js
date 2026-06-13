@@ -44,6 +44,15 @@ function trackUrl(placement, source = "web") {
   return `${api.track}?placementId=${encodeURIComponent(placement.id)}&source=${encodeURIComponent(source)}`;
 }
 
+function commandBlock(label, command) {
+  return `
+    <div class="command-block">
+      <strong>${escapeHtml(label)}</strong>
+      <pre class="code-sample mini"><code>${escapeHtml(command)}</code></pre>
+    </div>
+  `;
+}
+
 function placementCard(placement) {
   const claims = placement.claimCount ?? 0;
   const clicks = placement.clickCount ?? 0;
@@ -139,13 +148,14 @@ async function loadStats() {
 
 async function submitPlacement(event) {
   event.preventDefault();
+  const form = event.currentTarget;
   const status = document.getElementById("placement-status");
   status.textContent = "Submitting...";
 
   try {
     const data = await request(api.placements, {
       method: "POST",
-      body: JSON.stringify(formData(event.currentTarget))
+      body: JSON.stringify(formData(form))
     });
 
     if (data.checkoutUrl) {
@@ -154,7 +164,7 @@ async function submitPlacement(event) {
     } else {
       status.innerHTML = `Placement submitted. Invoice/manual approval needed. Placement id: <code>${data.placement.id}</code>`;
     }
-    event.currentTarget.reset();
+    form.reset();
   } catch (error) {
     status.textContent = error.message;
   }
@@ -162,16 +172,17 @@ async function submitPlacement(event) {
 
 async function submitFeedback(event) {
   event.preventDefault();
+  const form = event.currentTarget;
   const status = document.getElementById("feedback-status");
   status.textContent = "Sending...";
 
   try {
     await request(api.feedback, {
       method: "POST",
-      body: JSON.stringify(formData(event.currentTarget))
+      body: JSON.stringify(formData(form))
     });
     status.textContent = "Feedback recorded.";
-    event.currentTarget.reset();
+    form.reset();
   } catch (error) {
     status.textContent = error.message;
   }
@@ -179,16 +190,17 @@ async function submitFeedback(event) {
 
 async function submitBuilder(event) {
   event.preventDefault();
+  const form = event.currentTarget;
   const status = document.getElementById("builder-status");
   status.textContent = "Joining...";
 
   try {
     const data = await request(api.builders, {
       method: "POST",
-      body: JSON.stringify(formData(event.currentTarget))
+      body: JSON.stringify(formData(form))
     });
     status.textContent = data.alreadyJoined ? "Already in the founding builder pool." : "Joined. We will use this as real supply proof for advertisers.";
-    event.currentTarget.reset();
+    form.reset();
     await loadStats();
   } catch (error) {
     status.textContent = error.message;
@@ -197,22 +209,34 @@ async function submitBuilder(event) {
 
 async function submitPublisher(event) {
   event.preventDefault();
+  const form = event.currentTarget;
   const status = document.getElementById("publisher-status");
   status.textContent = "Registering...";
 
   try {
     const data = await request(api.publishers, {
       method: "POST",
-      body: JSON.stringify(formData(event.currentTarget))
+      body: JSON.stringify(formData(form))
     });
     const publisherId = data.publisher.id;
     const sampleUrl = `${window.location.origin}/api/ad-stream?publisherId=${encodeURIComponent(publisherId)}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&blockedKeywords=crypto,gambling&blockedCategories=adult,gambling&valueMode=relevant&format=statusline`;
     const installCommand = `curl -fsSL ${window.location.origin}/install-statusline.sh | bash -s -- ${publisherId}`;
-    const runCommand = `BUILDERPERKS_PUBLISHER_ID=${publisherId} BUILDERPERKS_KEYWORDS=typescript,react,postgres BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling BUILDERPERKS_BLOCKED_CATEGORIES=adult,gambling BUILDERPERKS_VALUE_MODE=relevant ~/.builderperks/statusline.sh`;
+    const runCommand = "~/.builderperks/statusline.sh";
+    const debugCommand = "BUILDERPERKS_DEBUG=1 ~/.builderperks/statusline.sh";
+    const claudeStatusLine = `"statusLine": { "type": "command", "command": "~/.builderperks/statusline.sh" }`;
+    const rawApiCommand = `curl "${sampleUrl}"`;
+    const commandOutput = `
+      ${commandBlock("1. Install and save publisher config", installCommand)}
+      ${commandBlock("2. Terminal test", runCommand)}
+      ${commandBlock("3. Debug setup if blank", debugCommand)}
+      ${commandBlock("4. Claude Code settings snippet", claudeStatusLine)}
+      ${commandBlock("5. Raw API check", rawApiCommand)}
+      <p class="fine-print">The installer writes <code>~/.builderperks/config.env</code>, so the status-line command needs no inline publisher id after install. Send broad keywords only; never send prompts or personal data. Debug output goes to stderr and is intended only for setup verification.</p>
+    `;
     status.innerHTML = data.alreadyJoined
-      ? `Already registered. Publisher id: <code>${escapeHtml(publisherId)}</code>. Install:<pre class="code-sample mini"><code>${escapeHtml(installCommand)}</code></pre>`
-      : `Registered. Publisher id: <code>${escapeHtml(publisherId)}</code>. Install:<pre class="code-sample mini"><code>${escapeHtml(installCommand)}</code></pre>Run:<pre class="code-sample mini"><code>${escapeHtml(runCommand)}</code></pre>Raw API:<pre class="code-sample mini"><code>curl "${escapeHtml(sampleUrl)}"</code></pre>`;
-    event.currentTarget.reset();
+      ? `Already registered. Publisher id: <code>${escapeHtml(publisherId)}</code>.${commandOutput}`
+      : `Registered. Publisher id: <code>${escapeHtml(publisherId)}</code>.${commandOutput}`;
+    form.reset();
     await loadStats();
   } catch (error) {
     status.textContent = error.message;

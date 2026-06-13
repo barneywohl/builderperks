@@ -46,20 +46,32 @@ One-command terminal/status-line install:
 curl -fsSL https://builderperks.netlify.app/install-statusline.sh | bash -s -- pub_x
 ```
 
-Run from any terminal, IDE task, Claude Code status line, or agent shell:
+The installer downloads `~/.builderperks/statusline.sh` and writes `~/.builderperks/config.env`
+with the publisher id plus safe keyword/category defaults.
+
+Run from any terminal, IDE task, Claude Code status line, or agent shell with no inline env vars:
 
 ```bash
-BUILDERPERKS_PUBLISHER_ID=pub_x \
-BUILDERPERKS_KEYWORDS=typescript,react,postgres \
-BUILDERPERKS_BLOCKED_KEYWORDS=crypto,gambling \
-BUILDERPERKS_BLOCKED_CATEGORIES=adult,gambling \
-BUILDERPERKS_VALUE_MODE=relevant \
 ~/.builderperks/statusline.sh
+```
+
+Claude Code statusLine settings snippet:
+
+```json
+"statusLine": { "type": "command", "command": "~/.builderperks/statusline.sh" }
 ```
 
 The helper prints one labeled sponsored line and fails quietly if the network or API is down.
 It sends only broad preference keywords and category choices you choose. It does not send prompts or personal data.
 Publisher earnings are estimated revenue share for hosting a respectful sponsored line, not payment for watching or clicking ads.
+
+If the command prints nothing during setup, run the same helper with diagnostics enabled:
+
+```bash
+BUILDERPERKS_DEBUG=1 ~/.builderperks/statusline.sh
+```
+
+Debug output goes to stderr and is intended for setup verification only, so normal terminal and status-line use stays quiet.
 
 Register a publisher surface:
 
