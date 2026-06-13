@@ -8,6 +8,7 @@ const extensionFileNames = [
   "popup.html",
   "popup.css"
 ];
+const zipTimestamp = new Date("2026-01-01T00:00:00Z");
 
 async function firstExistingDirectory(paths) {
   for (const path of paths) {
@@ -65,7 +66,7 @@ async function createZip(outputPath, filePaths) {
   const localRecords = [];
   const centralRecords = [];
   let offset = 0;
-  const { time, day } = dosDateTime();
+  const { time, day } = dosDateTime(zipTimestamp);
 
   for (const filePath of filePaths) {
     const data = await readFile(filePath);
