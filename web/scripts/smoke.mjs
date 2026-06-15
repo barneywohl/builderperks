@@ -177,6 +177,7 @@ assert.match(adStream, /cybersecurity/);
 assert.match(adStream, /ecommerce/);
 assert.match(adStream, /real_estate/);
 assert.match(adStream, /sweepstakes/);
+assert.match(adStream, /crypto/);
 assert.match(adStream, /dating/);
 assert.match(adStream, /regulated_partner/);
 assert.match(adStream, /restricted_partner/);

@@ -89,6 +89,24 @@ const financeCreated = await request("/api/placements", {
 assert.equal(financeCreated.response.status, 201);
 const financePlacementId = financeCreated.data.placement.id;
 
+const cryptoCreated = await request("/api/placements", {
+  method: "POST",
+  body: JSON.stringify({
+    company: "BuilderPerks Crypto Pilot",
+    contactName: "Smoke",
+    email: `crypto-smoke+${smokeRunId}@example.com`,
+    url: "https://example.com/builderperks-crypto-smoke",
+    headline: "Crypto wallet API for web3 agent workflows",
+    body: "Blockchain, bitcoin, ethereum, and defi wallet tooling for crypto builder workflows",
+    cta: "Review crypto pilot",
+    audience: "Crypto app builders",
+    packageId: "starter",
+    targetTools: ["Claude", "Cursor"]
+  })
+});
+assert.equal(cryptoCreated.response.status, 201);
+const cryptoPlacementId = cryptoCreated.data.placement.id;
+
 const fakeApprovedPartner = await request("/api/admin", {
   method: "POST",
   headers: { "x-admin-key": adminKey },
@@ -128,6 +146,15 @@ const financeApproved = await request("/api/admin", {
 assert.equal(financeApproved.response.status, 200);
 assert.equal(financeApproved.data.ok, true);
 assert.equal(financeApproved.data.placement.status, "approved");
+
+const cryptoApproved = await request("/api/admin", {
+  method: "POST",
+  headers: { "x-admin-key": adminKey },
+  body: JSON.stringify({ placementId: cryptoPlacementId, status: "approved", paymentStatus: "paid" })
+});
+assert.equal(cryptoApproved.response.status, 200);
+assert.equal(cryptoApproved.data.ok, true);
+assert.equal(cryptoApproved.data.placement.status, "approved");
 
 const tracked = await fetch(`${baseUrl}/api/track?placementId=${encodeURIComponent(placementId)}&source=api-smoke`, {
   redirect: "manual"
@@ -224,7 +251,7 @@ const publisher = await request("/api/publishers", {
     email: `publisher-smoke+${smokeRunId}@example.com`,
     surface: "terminal",
     payoutHandle: `publisher-smoke+${smokeRunId}@example.com`,
-    allowedCategories: "finance"
+    allowedCategories: "finance,crypto"
   })
 });
 assert.equal(publisher.response.status, 201);
@@ -476,6 +503,17 @@ assert.equal(financeOptIn.data.marketplace.valueMode, "high_value");
 assert.ok(financeOptIn.data.marketplace.providerLanes.includes("regulated_partner"));
 assert.ok(financeOptIn.data.revenueShare.estimatedPublisherEarningsUsd > streamed.data.revenueShare.estimatedPublisherEarningsUsd);
 
+const cryptoDefault = await request(`${streamBase}&surface=terminal&context=crypto%20web3%20wallet&keywords=crypto,web3,blockchain,wallet&format=statusline`);
+assert.equal(cryptoDefault.response.status, 200);
+assert.equal(cryptoDefault.data.ok, true);
+assert.notEqual(cryptoDefault.data.ad?.placementId, cryptoPlacementId);
+
+const cryptoOptIn = await request(`${streamBase}&surface=terminal&context=crypto%20web3%20wallet&keywords=crypto,web3,blockchain,wallet&allowedCategories=crypto&valueMode=high_value&format=statusline`);
+assert.equal(cryptoOptIn.response.status, 200);
+assert.equal(cryptoOptIn.data.ok, true);
+assert.equal(cryptoOptIn.data.ad.placementId, cryptoPlacementId);
+assert.ok(cryptoOptIn.data.marketplace.providerLanes.includes("restricted_partner"));
+
 const blockedDatabase = await request(`${streamBase}&surface=terminal&context=postgres&keywords=postgres&blockedCategories=database&format=statusline`);
 assert.equal(blockedDatabase.response.status, 200);
 assert.equal(blockedDatabase.data.ok, true);
@@ -526,4 +564,4 @@ assert.match(report.data.report.pilotReadout, /matched impressions/);
 assert.ok(report.data.report.breakdowns.publisherSurfaces.some((item) => item.value === "terminal"));
 assert.ok(report.data.report.breakdowns.keywords.some((item) => item.value === "postgres"));
 
-console.log(`api smoke ok: ${placementId} and ${financePlacementId} approved, tracked, relevance-scored, gated, opted in, and report endpoint verified`);
+console.log(`api smoke ok: ${placementId}, ${financePlacementId}, and ${cryptoPlacementId} approved, tracked, relevance-scored, gated, opted in, and report endpoint verified`);

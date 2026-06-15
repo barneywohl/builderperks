@@ -206,6 +206,14 @@ const CATEGORY_PROFILES: Record<string, {
     providerLane: "restricted_partner",
     note: "Performance CPA category. Requires explicit opt-in, disclosure, and quality controls."
   },
+  crypto: {
+    label: "Crypto and web3 offers",
+    valueTier: "restricted",
+    estimatedPublisherEarningsUsd: 0.09,
+    defaultEligible: false,
+    providerLane: "restricted_partner",
+    note: "Crypto/Web3 inventory is restricted. Never default in developer workflows; requires explicit opt-in, disclosure, and partner review."
+  },
   gaming: {
     label: "Gaming and game development",
     valueTier: "standard",
@@ -262,6 +270,7 @@ const CATEGORY_TERMS: Record<string, string[]> = {
   adult: ["adult", "xxx", "explicit"],
   dating: ["dating", "hookup", "relationship", "singles"],
   sweepstakes: ["sweepstakes", "giveaway", "prize", "survey", "cpa"],
+  crypto: ["crypto", "web3", "blockchain", "bitcoin", "ethereum", "defi", "wallet"],
   gaming: ["gaming", "game", "unity", "unreal", "gamedev", "esports"]
 };
 
@@ -304,6 +313,7 @@ function categoryHints(placement: Placement, keywords: string[]) {
   return Object.entries(CATEGORY_TERMS)
     .filter(([, terms]) => terms.some((term) => haystack.includes(term)))
     .map(([category]) => category)
+    .sort((a, b) => Number(CATEGORY_PROFILES[a]?.defaultEligible !== false) - Number(CATEGORY_PROFILES[b]?.defaultEligible !== false))
     .slice(0, 4);
 }
 
