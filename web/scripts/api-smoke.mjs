@@ -413,7 +413,8 @@ assert.equal(tokenlessStream.response.status, 401);
 assert.equal(tokenlessStream.data.ok, false);
 
 const streamBase = `/api/ad-stream?publisherId=${encodeURIComponent(publisher.data.publisher.id)}&publisherToken=${encodeURIComponent(publisher.data.publisher.token)}`;
-const streamed = await request(`${streamBase}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres&format=statusline`);
+const partnerFeedFixtureBlock = process.env.BUILDERPERKS_APPROVED_PARTNER_FEED_URLS ? "&blockedKeywords=partnerfeed" : "";
+const streamed = await request(`${streamBase}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres${partnerFeedFixtureBlock}&format=statusline`);
 assert.equal(streamed.response.status, 200);
 assert.equal(streamed.data.ok, true);
 assert.ok(streamed.data.ad);
@@ -444,6 +445,20 @@ assert.ok(streamed.data.demand.pendingPartnerIntegrations.includes("AdsBind AI a
 assert.ok(streamed.data.demand.pendingPartnerIntegrations.includes("Impact.com"));
 assert.ok(streamed.data.demand.pendingPartnerIntegrations.includes("ExoClick"));
 
+if (process.env.BUILDERPERKS_APPROVED_PARTNER_FEED_URLS) {
+  const partnerStream = await request(`${streamBase}&surface=terminal&context=partnerfeedonly&keywords=partnerfeed&format=statusline`);
+  assert.equal(partnerStream.response.status, 200);
+  assert.equal(partnerStream.data.ok, true);
+  assert.ok(partnerStream.data.ad);
+  assert.equal(partnerStream.data.demand.source, "approved_partner");
+  assert.equal(partnerStream.data.demand.activeSource, "approved_partner");
+  assert.equal(partnerStream.data.demand.partner, "Approved partner feed 1");
+  assert.deepEqual(partnerStream.data.demand.approvedPartnerIntegrations, ["Approved partner feed 1"]);
+  assert.match(partnerStream.data.render.statusLine, /^Sponsored via Approved partner feed 1:/);
+  assert.match(partnerStream.data.render.terminalLine, /^Sponsored via Approved partner feed 1:/);
+  assert.equal(partnerStream.data.impression.context, "[redacted: publisher context is used for matching but not stored]");
+}
+
 const sanitizedKeywordStream = await request(`${streamBase}&surface=terminal&context=postgres&keywords=postgres,alice%40example.com,sk-test_builderperks_should_not_store_12345,/Users/alice/private-repo,api_key=secretvalue&blockedKeywords=smoke&format=statusline`);
 assert.equal(sanitizedKeywordStream.response.status, 200);
 assert.equal(sanitizedKeywordStream.data.ok, true);
@@ -472,7 +487,19 @@ assert.ok(providerStatus.data.providers.some((provider) => provider.key === "pro
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "xbet_partners" && provider.lane === "gambling_affiliate" && provider.canServeNow === false));
 assert.match(providerStatus.data.summary.note, /approval/);
 assert.equal(providerStatus.data.summary.providerActivationOwner, "Barney/operator");
-assert.equal(providerStatus.data.summary.fastestBlockerPacket.missingCredentialEnv[0], "BUILDERPERKS_APPROVED_PARTNER_FEED_URLS");
+if (process.env.BUILDERPERKS_APPROVED_PARTNER_FEED_URLS) {
+  assert.equal(providerStatus.data.summary.thirdPartyCanServeNow, 1);
+  assert.equal(providerStatus.data.summary.credentialsConfigured, 1);
+  assert.equal(providerStatus.data.summary.providerApproved, 1);
+  assert.deepEqual(providerStatus.data.summary.fastestBlockerPacket.missingCredentialEnv, []);
+  assert.ok(providerStatus.data.summary.approvedPartnerFeeds.some((feed) => (
+    feed.providerKey === "approved_partner_feed_1"
+      && feed.providerName === "Approved partner feed 1"
+      && feed.urlConfigured === true
+  )));
+} else {
+  assert.equal(providerStatus.data.summary.fastestBlockerPacket.missingCredentialEnv[0], "BUILDERPERKS_APPROVED_PARTNER_FEED_URLS");
+}
 assert.match(providerStatus.data.summary.fastestBlockerPacket.nextAction, /BUILDERPERKS_APPROVED_PARTNER_FEED_URLS/);
 assert.ok(providerStatus.data.summary.priorityActivationPackets.some((packet) => (
   packet.providerKey === "carbon_cli"
@@ -490,12 +517,12 @@ assert.ok(providerStatus.data.activationPackets.some((packet) => (
     && packet.restrictedLaneDefault === "blocked_by_default"
 )));
 
-const financeDefault = await request(`${streamBase}&surface=terminal&context=finance%20tax%20banking&keywords=finance,banking,credit&format=statusline`);
+const financeDefault = await request(`${streamBase}&surface=terminal&context=finance%20tax%20banking&keywords=finance,banking,credit${partnerFeedFixtureBlock}&format=statusline`);
 assert.equal(financeDefault.response.status, 200);
 assert.equal(financeDefault.data.ok, true);
 assert.notEqual(financeDefault.data.ad?.placementId, financePlacementId);
 
-const financeOptIn = await request(`${streamBase}&surface=terminal&context=finance%20tax%20banking&keywords=finance,banking,credit&allowedCategories=finance&valueMode=high_value&format=statusline`);
+const financeOptIn = await request(`${streamBase}&surface=terminal&context=finance%20tax%20banking&keywords=finance,banking,credit${partnerFeedFixtureBlock}&allowedCategories=finance&valueMode=high_value&format=statusline`);
 assert.equal(financeOptIn.response.status, 200);
 assert.equal(financeOptIn.data.ok, true);
 assert.equal(financeOptIn.data.ad.placementId, financePlacementId);
@@ -503,18 +530,18 @@ assert.equal(financeOptIn.data.marketplace.valueMode, "high_value");
 assert.ok(financeOptIn.data.marketplace.providerLanes.includes("regulated_partner"));
 assert.ok(financeOptIn.data.revenueShare.estimatedPublisherEarningsUsd > streamed.data.revenueShare.estimatedPublisherEarningsUsd);
 
-const cryptoDefault = await request(`${streamBase}&surface=terminal&context=crypto%20web3%20wallet&keywords=crypto,web3,blockchain,wallet&format=statusline`);
+const cryptoDefault = await request(`${streamBase}&surface=terminal&context=crypto%20web3%20wallet&keywords=crypto,web3,blockchain,wallet${partnerFeedFixtureBlock}&format=statusline`);
 assert.equal(cryptoDefault.response.status, 200);
 assert.equal(cryptoDefault.data.ok, true);
 assert.notEqual(cryptoDefault.data.ad?.placementId, cryptoPlacementId);
 
-const cryptoOptIn = await request(`${streamBase}&surface=terminal&context=crypto%20web3%20wallet&keywords=crypto,web3,blockchain,wallet&allowedCategories=crypto&valueMode=high_value&format=statusline`);
+const cryptoOptIn = await request(`${streamBase}&surface=terminal&context=crypto%20web3%20wallet&keywords=crypto,web3,blockchain,wallet${partnerFeedFixtureBlock}&allowedCategories=crypto&valueMode=high_value&format=statusline`);
 assert.equal(cryptoOptIn.response.status, 200);
 assert.equal(cryptoOptIn.data.ok, true);
 assert.equal(cryptoOptIn.data.ad.placementId, cryptoPlacementId);
 assert.ok(cryptoOptIn.data.marketplace.providerLanes.includes("restricted_partner"));
 
-const blockedDatabase = await request(`${streamBase}&surface=terminal&context=postgres&keywords=postgres&blockedCategories=database&format=statusline`);
+const blockedDatabase = await request(`${streamBase}&surface=terminal&context=postgres&keywords=postgres${partnerFeedFixtureBlock}&blockedCategories=database&format=statusline`);
 assert.equal(blockedDatabase.response.status, 200);
 assert.equal(blockedDatabase.data.ok, true);
 assert.notEqual(blockedDatabase.data.ad?.placementId, "seed-neon");

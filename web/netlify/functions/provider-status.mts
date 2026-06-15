@@ -92,9 +92,9 @@ export default async (req: Request) => {
     ],
     summary: {
       totalMappedProviders: providers.length,
-      thirdPartyCanServeNow: canServeNow.length,
-      credentialsConfigured: credentialsConfigured.length,
-      providerApproved: approved.length,
+      thirdPartyCanServeNow: canServeNow.length + approvedPartnerFeeds.length,
+      credentialsConfigured: credentialsConfigured.length + approvedPartnerFeeds.length,
+      providerApproved: approved.length + approvedPartnerFeeds.length,
       missingCredentials: missingCredentials.length,
       missingApproval: missingApproval.length,
       providerActivationOwner: PROVIDER_ACTIVATION_OWNER,

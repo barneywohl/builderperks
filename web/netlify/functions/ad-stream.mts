@@ -311,10 +311,21 @@ function matchesBlockedPreference(placement: Placement, blockedKeywords: string[
 function categoryHints(placement: Placement, keywords: string[]) {
   const haystack = `${placement.company} ${placement.headline} ${placement.body} ${placement.audience} ${placement.targetTools.join(" ")} ${keywords.join(" ")}`.toLowerCase();
   return Object.entries(CATEGORY_TERMS)
-    .filter(([, terms]) => terms.some((term) => haystack.includes(term)))
+    .filter(([, terms]) => terms.some((term) => categoryTermMatches(haystack, term)))
     .map(([category]) => category)
     .sort((a, b) => Number(CATEGORY_PROFILES[a]?.defaultEligible !== false) - Number(CATEGORY_PROFILES[b]?.defaultEligible !== false))
     .slice(0, 4);
+}
+
+function categoryTermMatches(haystack: string, term: string) {
+  if (/^[a-z0-9_+#.-]+$/.test(term)) {
+    return new RegExp(`(^|[^a-z0-9_+#.-])${escapeRegExp(term)}([^a-z0-9_+#.-]|$)`).test(haystack);
+  }
+  return haystack.includes(term);
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function categoryProfiles(categories: string[]) {
@@ -349,6 +360,12 @@ function valueScore(categories: string[], valueMode: ValueMode) {
     const profile = CATEGORY_PROFILES[category];
     return score + (profile ? profile.estimatedPublisherEarningsUsd * multiplier : 0);
   }, 0);
+}
+
+function demandPriority(placement: Placement) {
+  if (placement.demandSource === "approved_partner") return 100;
+  if (placement.demandSource === "direct_advertiser") return 1;
+  return 0;
 }
 
 function sponsoredLabelForPlacement(placement: Placement) {
@@ -428,6 +445,10 @@ export default async (req: Request) => {
 
   const partnerFeedResults = await approvedPartnerFeedPlacements();
   const partnerPlacements = partnerFeedResults.flatMap((result) => result.placements);
+  const activeApprovedPartners = new Set([
+    ...configuredProviderNames(),
+    ...partnerFeedResults.map((result) => result.source.providerName)
+  ]);
   const approved = [
     ...state.placements.filter((placement) => placement.status === "approved"),
     ...partnerPlacements
@@ -435,6 +456,9 @@ export default async (req: Request) => {
   if (!approved.length) return json({ ok: true, ad: null, reason: "no_approved_placements" });
 
   const eligible = approved.filter((placement) => {
+    if (placement.demandSource === "approved_partner" && !activeApprovedPartners.has(placement.demandPartner ?? "")) {
+      return false;
+    }
     const categories = categoryHints(placement, keywords);
     return !matchesBlockedPreference(placement, blockedKeywords)
       && !matchesBlockedCategory(categories, effectiveBlockedCategories)
@@ -444,6 +468,26 @@ export default async (req: Request) => {
     ok: true,
     ad: null,
     reason: "no_approved_placements_after_preferences",
+    partnerFeeds: partnerFeedResults.length
+      ? partnerFeedResults.map((result) => ({
+          providerKey: result.source.providerKey,
+          providerName: result.source.providerName,
+          fetched: !result.error,
+          placementCount: result.placements.length,
+          error: result.error,
+          placementDiagnostics: result.placements.slice(0, 3).map((placement) => {
+            const categories = categoryHints(placement, keywords);
+            return {
+              placementId: placement.id,
+              demandPartner: placement.demandPartner,
+              categories,
+              blockedPreference: matchesBlockedPreference(placement, blockedKeywords),
+              blockedCategory: matchesBlockedCategory(categories, effectiveBlockedCategories),
+              allowedCategory: matchesAllowedCategory(categories, allowedCategories)
+            };
+          })
+        }))
+      : [],
     preferences: {
       keywords,
       blockedKeywords,
@@ -458,8 +502,8 @@ export default async (req: Request) => {
   const placement = [...eligible].sort((a, b) => {
     const bCategories = categoryHints(b, keywords);
     const aCategories = categoryHints(a, keywords);
-    return (scorePlacement(b, context, surface, keywords) + valueScore(bCategories, valueMode))
-      - (scorePlacement(a, context, surface, keywords) + valueScore(aCategories, valueMode));
+    return (scorePlacement(b, context, surface, keywords) + valueScore(bCategories, valueMode) + demandPriority(b))
+      - (scorePlacement(a, context, surface, keywords) + valueScore(aCategories, valueMode) + demandPriority(a));
   })[0];
   const categories = categoryHints(placement, keywords);
   const estimatedPublisherEarningsUsd = publisherEarningsFor(categories, valueMode);
