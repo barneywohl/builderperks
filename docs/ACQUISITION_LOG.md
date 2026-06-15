@@ -1719,3 +1719,17 @@ Send-lane state:
 Truthful execution status:
 - First-user outreach can be executed truthfully through controlled Gmail/browser sends if each send captures evidence under `shared/status/`.
 - Outreach copy must continue to avoid claims of third-party provider/network fill until credentials, provider approval, and placement-level `approved_partner` demand are configured.
+
+## 2026-06-15 14:48 ET - Exa Reply Sent
+
+Responded to Cat Yu / Exa in the existing Gmail thread after Jake supplied the external-send directive keyword.
+
+- Thread: `BuilderPerks pilot for AI-builder search/API intent`
+- Positioning adjusted based on feedback: paid placements are not Exa's current model; reply accepted API credits and proposed a small BuilderPerks/agent-search workflow test.
+- Formatting guard: `python3 /Volumes/X10/clawd/ops/scripts/email_body_guard.py --check --file docs/EXA_REPLY_DRAFT_20260615.md` passed before send.
+- Browser lane: isolated Clawd Chrome/CDP only.
+- Evidence before send: `/Volumes/X10/clawd/shared/status/builderperks-gmail-exa-reply-before-send-20260615-1446.png`
+- Evidence after send: `/Volumes/X10/clawd/shared/status/builderperks-gmail-exa-reply-sent-20260615-1448.png`
+- Gmail showed `Message sent` and the sent reply in-thread at 14:46 ET.
+
+No provider-live claim was made. This is an API-credit/business-development follow-up, not third-party ad supply activation.
