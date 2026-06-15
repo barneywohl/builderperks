@@ -21,6 +21,7 @@ export type PartnerFeedSource = {
   providerKey: string;
   providerName: string;
   url: string;
+  kind: "json_feed" | "smartlink";
 };
 
 type PartnerFeedResult = {
@@ -46,14 +47,16 @@ export function approvedPartnerFeedSources(): PartnerFeedSource[] {
     .map((provider) => ({
       providerKey: provider.key,
       providerName: provider.name,
-      url: providerFeedUrl(provider)
+      url: providerFeedUrl(provider),
+      kind: provider.key === "adsterra" ? "smartlink" as const : "json_feed" as const
     }))
     .filter((source) => source.url);
 
   const genericFeeds = splitFeedUrls(env(FEED_URL_ENV)).map((url, index) => ({
     providerKey: `approved_partner_feed_${index + 1}`,
     providerName: `Approved partner feed ${index + 1}`,
-    url: cleanUrl(url)
+    url: cleanUrl(url),
+    kind: "json_feed" as const
   })).filter((source) => source.url);
 
   const seen = new Set<string>();
@@ -114,9 +117,38 @@ function placementFromItem(source: PartnerFeedSource, item: PartnerFeedItem, ind
   };
 }
 
+function placementFromSmartLink(source: PartnerFeedSource): Placement | null {
+  const url = cleanUrl(source.url);
+  if (!url) return null;
+  return {
+    id: `partner-${source.providerKey}-smartlink`,
+    createdAt: "2026-06-15T00:00:00.000Z",
+    updatedAt: "2026-06-15T00:00:00.000Z",
+    status: "approved",
+    company: source.providerName,
+    contactName: source.providerName,
+    email: "partner-feed@builderperks.local",
+    headline: "Relevant sponsored offer for builders",
+    body: "Open a disclosed sponsored offer matched by the approved partner network.",
+    cta: "Open sponsored offer",
+    url,
+    audience: "AI builders and developer-tool users",
+    packageId: "starter",
+    budgetUsd: 0,
+    targetTools: ["Claude", "ChatGPT", "Cursor"],
+    paymentStatus: "paid",
+    demandSource: "approved_partner",
+    demandPartner: source.providerName
+  };
+}
+
 export async function approvedPartnerFeedPlacements(): Promise<PartnerFeedResult[]> {
   const sources = approvedPartnerFeedSources();
   return Promise.all(sources.map(async (source) => {
+    if (source.kind === "smartlink") {
+      const placement = placementFromSmartLink(source);
+      return { source, placements: placement ? [placement] : [] };
+    }
     try {
       const response = await fetch(source.url, {
         headers: { accept: "application/json" },

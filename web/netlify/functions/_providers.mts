@@ -705,9 +705,9 @@ const PROVIDERS: Array<Omit<ProviderStatus, "status" | "canServeNow" | "configur
     key: "adsterra",
     name: "Adsterra",
     lane: "push_pop_network",
-    requiredEnv: ["BUILDERPERKS_ADSTERRA_PLACEMENT_ID"],
-    note: "Broad ad-network candidate across display/native/social bar/pop formats. Strict quality/category controls required.",
-    sourceUrl: "https://adsterra.com/api/"
+    requiredEnv: ["BUILDERPERKS_ADSTERRA_SMARTLINK_URL"],
+    note: "Fast-approval SmartLink/direct-link demand lane. Use only as disclosed sponsored click-out demand with strict quality/category controls.",
+    sourceUrl: "https://adsterra.com/blog/guide-for-working-with-direct-links/"
   },
   {
     key: "mondiad",

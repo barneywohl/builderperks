@@ -53,6 +53,7 @@ export default async (req: Request) => {
   const missingCredentials = providers.filter((provider) => !provider.credentialsConfigured);
   const missingApproval = providers.filter((provider) => provider.credentialsConfigured && !provider.providerApproved);
   const approvedPartnerFeeds = approvedPartnerFeedSources();
+  const genericApprovedPartnerFeeds = approvedPartnerFeeds.filter((feed) => feed.providerKey.startsWith("approved_partner_feed_"));
   const activationPackets = providerActivationPackets(providers);
   const priorityActivationPackets = activationPackets.filter((packet) => [
     "ethicalads",
@@ -92,9 +93,9 @@ export default async (req: Request) => {
     ],
     summary: {
       totalMappedProviders: providers.length,
-      thirdPartyCanServeNow: canServeNow.length + approvedPartnerFeeds.length,
-      credentialsConfigured: credentialsConfigured.length + approvedPartnerFeeds.length,
-      providerApproved: approved.length + approvedPartnerFeeds.length,
+      thirdPartyCanServeNow: canServeNow.length + genericApprovedPartnerFeeds.length,
+      credentialsConfigured: credentialsConfigured.length + genericApprovedPartnerFeeds.length,
+      providerApproved: approved.length + genericApprovedPartnerFeeds.length,
       missingCredentials: missingCredentials.length,
       missingApproval: missingApproval.length,
       providerActivationOwner: PROVIDER_ACTIVATION_OWNER,

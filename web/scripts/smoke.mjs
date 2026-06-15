@@ -264,7 +264,7 @@ assert.match(providerConfig, /BUILDERPERKS_MAXBOUNTY_API_KEY/);
 assert.match(providerConfig, /BUILDERPERKS_ZEYDOO_API_KEY/);
 assert.match(providerConfig, /BUILDERPERKS_RICHADS_API_KEY/);
 assert.match(providerConfig, /BUILDERPERKS_PROPELLERADS_ZONE_ID/);
-assert.match(providerConfig, /BUILDERPERKS_ADSTERRA_PLACEMENT_ID/);
+assert.match(providerConfig, /BUILDERPERKS_ADSTERRA_SMARTLINK_URL/);
 assert.match(providerConfig, /BUILDERPERKS_MONDIAD_ZONE_ID/);
 assert.match(providerConfig, /BUILDERPERKS_XBET_PARTNERS_ID/);
 assert.match(providerConfig, /BUILDERPERKS_BETWAY_PARTNERS_ID/);
