@@ -222,14 +222,17 @@ async function loadDemandStatus() {
     const data = await request(api.providerStatus);
     const configured = data.summary?.configured || [];
     const pending = data.summary?.pending || [];
+    const readyCount = Number(data.summary?.thirdPartyCanServeNow ?? 0);
+    const configuredText = configured.length ? configured.slice(0, 8).join(", ") : "none configured";
+    const pendingText = pending.length > 8 ? `${pending.slice(0, 8).join(", ")} and ${pending.length - 8} more` : pending.join(", ");
     status.innerHTML = `
       <strong>Demand status</strong>
-      <span>Working today with BuilderPerks seed/direct approved offers. Configured providers: ${escapeHtml(configured.length ? configured.join(", ") : "none yet")}. Pending approval/API details: ${escapeHtml(pending.join(", "))}.</span>
+      <span>${escapeHtml(readyCount)} third-party/feed providers ready when production env is configured. Active configured demand: ${escapeHtml(configuredText)}. Pending approval/API details: ${escapeHtml(pendingText || "none")}.</span>
     `;
   } catch {
     status.innerHTML = `
       <strong>Demand status</strong>
-      <span>Working today with BuilderPerks seed/direct approved offers. EthicalAds and BuySellAds/Carbon are the priority provider paths for approved third-party demand.</span>
+      <span>Demand status is unavailable. The product still falls back to approved seed/direct offers and hides third-party claims until provider readiness is verified.</span>
     `;
   }
 }
