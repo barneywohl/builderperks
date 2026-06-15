@@ -6,6 +6,15 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+
 [[redirects]]
   from = "/api/placements"
   to = "/.netlify/functions/placements"
@@ -54,6 +63,26 @@
 [[redirects]]
   from = "/api/admin"
   to = "/.netlify/functions/admin"
+  status = 200
+
+[[redirects]]
+  from = "/api/report"
+  to = "/.netlify/functions/report"
+  status = 200
+
+[[redirects]]
+  from = "/api/proof-session-nonces"
+  to = "/.netlify/functions/proof-session-nonces"
+  status = 200
+
+[[redirects]]
+  from = "/api/proof-sessions"
+  to = "/.netlify/functions/proof-sessions"
+  status = 200
+
+[[redirects]]
+  from = "/api/provider-status"
+  to = "/.netlify/functions/provider-status"
   status = 200
 
 [[redirects]]

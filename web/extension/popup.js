@@ -39,12 +39,18 @@ async function request(path, options = {}) {
 function card(placement) {
   const item = document.createElement("article");
   item.className = "card";
-  item.innerHTML = `
-    <small>${placement.company}</small>
-    <h3>${placement.headline}</h3>
-    <p>${placement.body}</p>
-    <a href="${placement.url}" target="_blank" rel="noreferrer">${placement.cta}</a>
-  `;
+  const company = document.createElement("small");
+  company.textContent = placement.company;
+  const headline = document.createElement("h3");
+  headline.textContent = placement.headline;
+  const body = document.createElement("p");
+  body.textContent = placement.body;
+  const cta = document.createElement("a");
+  cta.href = placement.url;
+  cta.target = "_blank";
+  cta.rel = "noreferrer";
+  cta.textContent = placement.cta;
+  item.append(company, headline, body, cta);
   return item;
 }
 
@@ -89,6 +95,20 @@ document.getElementById("daily-cap").addEventListener("change", async (event) =>
 document.getElementById("pause-today").addEventListener("click", async () => {
   await chrome.storage.sync.set({ pausedUntil: Date.now() + 24 * 60 * 60 * 1000 });
   await load();
+});
+
+document.getElementById("show-test-card").addEventListener("click", async () => {
+  const status = document.getElementById("status");
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.id) throw new Error("Open Claude or ChatGPT, then try again.");
+    const response = await chrome.tabs.sendMessage(tab.id, { type: "builderperks:show-test-card" });
+    status.textContent = response?.ok
+      ? "First card inserted. Keep using AI normally; future cards appear during active build sessions."
+      : "Open Claude or ChatGPT and reload the tab, then try again.";
+  } catch (error) {
+    status.textContent = error.message;
+  }
 });
 
 document.getElementById("feedback").addEventListener("submit", async (event) => {

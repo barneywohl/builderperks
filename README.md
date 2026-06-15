@@ -61,6 +61,22 @@ Claude Code statusLine settings snippet:
 "statusLine": { "type": "command", "command": "~/.builderperks/statusline.sh" }
 ```
 
+VS Code / Cursor task snippet:
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "BuilderPerks sponsored line",
+      "type": "shell",
+      "command": "~/.builderperks/statusline.sh",
+      "problemMatcher": []
+    }
+  ]
+}
+```
+
 The helper prints one labeled sponsored line and fails quietly if the network or API is down.
 It sends only broad preference keywords and category choices you choose. It does not send prompts or personal data.
 Publisher earnings are estimated revenue share for hosting a respectful sponsored line, not payment for watching or clicking ads.
@@ -96,6 +112,7 @@ Regulated or restricted categories such as finance, legal, health, gambling, and
 Do not send personal data or full prompts.
 Terminal publishers can render `render.statusLine` or `render.terminalLine` directly.
 IDE and agent UIs can render `render.ideCard`; Markdown surfaces can render `render.markdown`.
+VS Code and Cursor can start with the task snippet above, then graduate to rendering `render.ideCard` inside a native panel.
 Publisher earnings are estimated and unpaid until advertiser revenue and payout rails are approved.
 The response includes `marketplace.categoryProfiles` and `marketplace.providerLanes` so publishers and advertisers can tell whether a match is BuilderPerks seed/direct demand, developer-network compatible demand, or a regulated/restricted partner lane.
 

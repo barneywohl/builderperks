@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { badRequest, cleanText, cleanUrl, env, id, json, parseJson, readState, siteUrl, writeState, type Placement } from "./_data.mjs";
+import { adminAuthorized, badRequest, cleanEmail, cleanText, cleanUrl, env, id, json, parseJson, readState, siteUrl, writeState, type Placement } from "./_data.mjs";
 
 const packages = {
   starter: 250,
@@ -54,7 +54,11 @@ export default async (req: Request) => {
 
   if (req.method === "GET") {
     const url = new URL(req.url);
-    const includePending = url.searchParams.get("includePending") === "1";
+    const includePendingRequested = url.searchParams.get("includePending") === "1";
+    const includePending = includePendingRequested && await adminAuthorized(req);
+    if (includePendingRequested && !includePending) {
+      return json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }
     const placements = state.placements
       .filter((placement) => includePending || placement.status === "approved")
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
@@ -91,7 +95,7 @@ export default async (req: Request) => {
     status: "pending",
     company: cleanText(body.company),
     contactName: cleanText(body.contactName),
-    email: cleanText(body.email).toLowerCase(),
+    email: cleanEmail(body.email),
     headline: cleanText(body.headline),
     body: cleanText(body.body),
     cta: cleanText(body.cta, "Learn more"),
@@ -104,7 +108,7 @@ export default async (req: Request) => {
   };
 
   if (!placement.company || !placement.email || !placement.headline || !placement.body || !placement.url) {
-    return badRequest("Company, email, headline, body, and URL are required");
+    return badRequest("Company, valid email, headline, body, and URL are required");
   }
 
   const { checkout: stripeCheckout, error: checkoutError } = staticCheckoutUrl

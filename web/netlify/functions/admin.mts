@@ -1,10 +1,27 @@
 import type { Config } from "@netlify/functions";
 import { adminAuthorized, badRequest, cleanText, json, parseJson, readState, writeState, type Placement } from "./_data.mjs";
+import { approvedPartnerFeedSources } from "./_partner_feeds.mjs";
+import { providerStatuses } from "./_providers.mjs";
 
 function cleanDemandSource(value: unknown): Placement["demandSource"] | null {
   return value === "builderperks_seed" || value === "direct_advertiser" || value === "approved_partner"
     ? value
     : null;
+}
+
+function normalizePartnerName(value: string) {
+  return value.trim().toLowerCase();
+}
+
+function approvedPartnerActive(partnerName: string) {
+  const normalized = normalizePartnerName(partnerName);
+  if (!normalized) return false;
+  const activeProviderNames = providerStatuses()
+    .filter((provider) => provider.canServeNow)
+    .map((provider) => normalizePartnerName(provider.name));
+  const activeFeedNames = approvedPartnerFeedSources()
+    .map((source) => normalizePartnerName(source.providerName));
+  return [...activeProviderNames, ...activeFeedNames].includes(normalized);
 }
 
 export default async (req: Request) => {
@@ -41,10 +58,22 @@ export default async (req: Request) => {
   const placement = state.placements.find((item) => item.id === placementId);
   if (!placement) return badRequest("Placement not found");
 
+  const demandSource = cleanDemandSource(body.demandSource);
+  const nextDemandSource = demandSource ?? placement.demandSource;
+  const nextDemandPartner = body.demandPartner !== undefined
+    ? cleanText(body.demandPartner) || undefined
+    : placement.demandPartner;
+
+  if (status === "approved" && nextDemandSource === "approved_partner") {
+    if (!nextDemandPartner) return badRequest("Approved partner demand requires demandPartner");
+    if (!approvedPartnerActive(nextDemandPartner)) {
+      return badRequest("Approved partner demand requires configured credentials/feed and explicit provider approval before serving");
+    }
+  }
+
   placement.status = status;
   placement.updatedAt = new Date().toISOString();
   if (body.paymentStatus === "paid") placement.paymentStatus = "paid";
-  const demandSource = cleanDemandSource(body.demandSource);
   if (demandSource) placement.demandSource = demandSource;
   if (body.demandPartner !== undefined) {
     placement.demandPartner = cleanText(body.demandPartner) || undefined;

@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { badRequest, cleanText, id, json, parseJson, readState, writeState, type BuilderSignup } from "./_data.mjs";
+import { badRequest, cleanEmail, cleanText, id, json, parseJson, readState, writeState, type BuilderSignup } from "./_data.mjs";
 
 export default async (req: Request) => {
   const state = await readState();
@@ -23,8 +23,8 @@ export default async (req: Request) => {
   const body = await parseJson(req);
   if (!body) return badRequest("Invalid JSON body");
 
-  const email = cleanText(body.email).toLowerCase();
-  if (!email || !email.includes("@")) return badRequest("Valid email is required");
+  const email = cleanEmail(body.email);
+  if (!email) return badRequest("Valid email is required");
 
   const existing = state.builders.find((builder) => builder.email === email);
   if (existing) {

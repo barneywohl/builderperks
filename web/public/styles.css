@@ -109,6 +109,34 @@ main {
   gap: 12px;
 }
 
+.truth-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 20px 0;
+}
+
+.truth-grid div {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 5px;
+  min-height: 92px;
+  padding: 13px;
+}
+
+.truth-grid strong {
+  color: var(--accent-dark);
+  font-size: 14px;
+}
+
+.truth-grid span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
 .button {
   align-items: center;
   background: var(--panel);
@@ -162,6 +190,53 @@ main {
   display: grid;
   gap: 14px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.works-now {
+  display: grid;
+  gap: 20px;
+}
+
+.works-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.works-grid article {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  min-height: 158px;
+  padding: 16px;
+}
+
+.works-grid strong {
+  color: var(--accent-dark);
+  font-size: 17px;
+}
+
+.works-grid span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.demand-status {
+  background: #ecfdf5;
+  border: 1px solid rgba(15, 118, 110, 0.2);
+  border-radius: 8px;
+  color: var(--accent-dark);
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.demand-status span {
+  color: var(--muted);
+  line-height: 1.45;
 }
 
 .path-router article,
@@ -242,6 +317,42 @@ main {
   padding: 7px 9px;
 }
 
+.flow-check {
+  display: grid;
+  gap: 20px;
+}
+
+.flow-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.flow-grid article {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  min-height: 230px;
+  padding: 16px;
+}
+
+.flow-grid strong {
+  color: var(--accent-dark);
+  font-size: 18px;
+}
+
+.flow-grid span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.flow-grid .button {
+  align-self: end;
+}
+
 .wait-label {
   color: #a7f3d0;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -296,6 +407,66 @@ main {
   line-height: 1.25;
 }
 
+.user-sprint {
+  display: grid;
+  gap: 20px;
+}
+
+.sprint-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.sprint-grid article,
+.sprint-proof {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.sprint-grid article {
+  min-height: 306px;
+}
+
+.sprint-grid small {
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.sprint-grid strong {
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.08;
+}
+
+.sprint-grid span,
+.sprint-proof span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.sprint-grid .button {
+  align-self: end;
+}
+
+.sprint-proof {
+  align-items: center;
+  grid-template-columns: minmax(190px, 0.28fr) minmax(0, 1fr);
+  min-height: 82px;
+}
+
+.sprint-proof strong {
+  color: var(--accent-dark);
+  font-size: 16px;
+}
+
 .install-flow {
   display: grid;
   gap: 24px;
@@ -337,6 +508,89 @@ main {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.35;
+}
+
+.first-run {
+  display: grid;
+  gap: 20px;
+}
+
+.first-run-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.first-run-grid article {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  min-height: 250px;
+  padding: 16px;
+}
+
+.first-run-grid strong {
+  color: var(--accent-dark);
+  font-size: 18px;
+}
+
+.first-run-grid span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.first-run-grid .button,
+.first-run-grid .code-sample {
+  align-self: end;
+}
+
+.workflow-audit {
+  display: grid;
+  gap: 20px;
+}
+
+.workflow-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.workflow-grid article,
+.workflow-pass {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  min-height: 168px;
+  padding: 16px;
+}
+
+.workflow-grid strong,
+.workflow-pass strong {
+  color: var(--accent-dark);
+  font-size: 17px;
+}
+
+.workflow-grid span,
+.workflow-pass span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.workflow-grid code {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.workflow-pass {
+  align-items: center;
+  grid-template-columns: minmax(160px, 0.25fr) minmax(0, 1fr);
+  min-height: 80px;
 }
 
 .scoreboard {
@@ -430,6 +684,45 @@ main {
   font-size: 13px;
   font-weight: 900;
   line-height: 1.25;
+}
+
+.share-kit {
+  display: grid;
+  gap: 20px;
+}
+
+.share-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.share-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  min-height: 300px;
+  padding: 18px;
+}
+
+.share-card small {
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.share-card p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.share-card .button {
+  align-self: end;
 }
 
 .form-grid {
@@ -607,9 +900,21 @@ textarea {
   margin-top: 12px;
 }
 
+.command-heading {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
 .command-block strong {
   color: var(--accent-dark);
   font-size: 13px;
+}
+
+.copy-command {
+  min-height: 30px;
+  padding: 7px 11px;
 }
 
 .fine-print {
@@ -660,10 +965,16 @@ code {
   }
 
   .hero,
+  .works-grid,
   .path-router,
-  .demo-flow,
-  .launch-strip,
-  .install-flow,
+    .demo-flow,
+    .launch-strip,
+    .sprint-grid,
+    .sprint-proof,
+    .install-flow,
+    .first-run-grid,
+  .workflow-grid,
+  .workflow-pass,
   .scoreboard,
   .publisher-loop,
   .two-column,
@@ -673,7 +984,8 @@ code {
   }
 
   .launch-metrics,
-  .score-grid {
+  .score-grid,
+  .truth-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

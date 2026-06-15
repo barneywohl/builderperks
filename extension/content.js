@@ -2,6 +2,7 @@ const defaultApiUrl = "https://builderperks.netlify.app";
 let placements = [];
 let insertedAt = 0;
 let currentApiUrl = defaultApiUrl;
+let activeAiSessionUntil = 0;
 const dayKey = new Date().toISOString().slice(0, 10);
 const hiddenReasonKey = "hiddenReasonLabels";
 const contextRules = [
@@ -87,7 +88,39 @@ async function sendRelevanceEvent(placement, action, reason) {
 
 function likelyWaitingNode(node) {
   const text = node.textContent?.toLowerCase() || "";
-  return text.includes("thinking") || text.includes("generating") || text.includes("working") || text.includes("running");
+  return (
+    text.includes("thinking") ||
+    text.includes("generating") ||
+    text.includes("working") ||
+    text.includes("running") ||
+    text.includes("stop generating") ||
+    text.includes("stop response")
+  );
+}
+
+function markActiveAiSession() {
+  activeAiSessionUntil = Date.now() + 90 * 1000;
+}
+
+function likelySendControl(element) {
+  const label = [
+    element.getAttribute?.("aria-label"),
+    element.getAttribute?.("title"),
+    element.textContent
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  return /\bsend\b|\bsubmit\b|\brun\b|\bask\b/.test(label);
+}
+
+function activeWorkspaceTarget() {
+  return (
+    document.querySelector("main form") ||
+    document.querySelector("main") ||
+    document.querySelector('[role="main"]') ||
+    document.body
+  );
 }
 
 function pageContextText() {
@@ -236,18 +269,64 @@ async function maybeInsert() {
   if (!placements.length || Date.now() - insertedAt < 15000) return;
   if (document.querySelector(".builderperks-inline")) return;
 
-  const nodes = [...document.querySelectorAll("div, p, span")].filter(likelyWaitingNode);
-  const target = nodes.at(-1);
+  const nodes = [...document.querySelectorAll("div, p, span, button")].filter(likelyWaitingNode);
+  const target = nodes.at(-1) || (Date.now() < activeAiSessionUntil ? activeWorkspaceTarget() : null);
   if (!target) return;
 
   const choice = choosePlacement(settings);
   if (!choice) return;
   const { placement, reason } = choice;
-  target.insertAdjacentElement("afterend", buildCard(placement, reason));
+  const card = buildCard(placement, target === nodes.at(-1) ? reason : `${reason} (active AI session)`);
+  if (target === document.body || target.matches?.("main, [role='main']")) {
+    target.prepend(card);
+  } else {
+    target.insertAdjacentElement("afterend", card);
+  }
   insertedAt = Date.now();
   await updateSettings({ shownToday: Number(settings.shownToday || 0) + 1, dayKey });
 }
 
+async function insertTestCard() {
+  await loadPlacements();
+  const settings = await getSettings();
+  if (!settings.enabled || !placements.length) return false;
+  document.querySelector(".builderperks-inline")?.remove();
+  const choice = choosePlacement(settings);
+  if (!choice) return false;
+  const card = buildCard(choice.placement, `${choice.reason} (manual test)`);
+  card.classList.add("builderperks-demo");
+  const target = document.querySelector("main") || document.body;
+  target.prepend(card);
+  insertedAt = Date.now();
+  await updateSettings({ shownToday: Number(settings.shownToday || 0) + 1, dayKey });
+  return true;
+}
+
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message?.type !== "builderperks:show-test-card") return false;
+  insertTestCard()
+    .then((inserted) => sendResponse({ ok: inserted }))
+    .catch((error) => sendResponse({ ok: false, error: error.message }));
+  return true;
+});
+
 loadPlacements().then(maybeInsert);
 setInterval(loadPlacements, 60000);
 setInterval(maybeInsert, 2500);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" || event.shiftKey || event.metaKey || event.ctrlKey || event.altKey) return;
+  const target = event.target;
+  if (!(target instanceof HTMLTextAreaElement || target instanceof HTMLInputElement || target?.isContentEditable)) return;
+  markActiveAiSession();
+}, true);
+
+document.addEventListener("click", (event) => {
+  const control = event.target?.closest?.("button, [role='button']");
+  if (!control || !likelySendControl(control)) return;
+  markActiveAiSession();
+}, true);
+
+new MutationObserver(() => {
+  if (Date.now() < activeAiSessionUntil) maybeInsert();
+}).observe(document.body, { childList: true, subtree: true });

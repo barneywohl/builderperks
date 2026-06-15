@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { badRequest, cleanText, id, json, parseJson, readState, writeState, type Claim } from "./_data.mjs";
+import { badRequest, cleanEmail, cleanText, id, json, parseJson, readState, writeState, type Claim } from "./_data.mjs";
 
 export default async (req: Request) => {
   if (req.method !== "POST") {
@@ -13,12 +13,12 @@ export default async (req: Request) => {
     id: id("claim"),
     createdAt: new Date().toISOString(),
     placementId: cleanText(body.placementId),
-    email: cleanText(body.email).toLowerCase(),
+    email: cleanEmail(body.email),
     note: cleanText(body.note),
     source: cleanText(body.source, "web")
   };
 
-  if (!claim.placementId || !claim.email) return badRequest("Placement and email are required");
+  if (!claim.placementId || !claim.email) return badRequest("Placement and valid email are required");
 
   const state = await readState();
   const placement = state.placements.find((item) => item.id === claim.placementId && item.status === "approved");

@@ -160,6 +160,31 @@ This avoids fake arbitrage, incentivized ad-network traffic, or hidden third-par
 4. Email BuySellAds/Carbon with the new API proof and ask about a pilot/ad-serving partnership.
 5. Keep payouts estimated/unpaid until advertiser revenue and payout rails are approved.
 
+## 2026-06-13 Provider Backfill Update
+
+Jake explicitly prioritized hooking up niche and general ad providers so BuilderPerks has credible demand lanes while user supply is still small.
+
+Concrete update:
+
+- Added `docs/AD_PROVIDER_BACKFILL_PLAN_20260613.md`.
+- Expanded `/api/ad-stream` pending partner metadata from a generic list to explicit lanes:
+  - EthicalAds
+  - Carbon Ads
+  - BuySellAds Publisher Solutions
+  - BuySellAds Newsletter Network
+  - AdButler
+  - Kevel
+- Added API smoke assertions so those pending provider lanes stay visible in demand metadata.
+
+Decision:
+
+- EthicalAds remains the warmest immediate partner path.
+- Carbon/BuySellAds is the best developer-demand partner path once there is supply proof.
+- BuySellAds Newsletter Network is an adjacent newsletter/digest backfill lane, not an in-product ad stream yet.
+- AdButler and Kevel remain infrastructure options, not demand sources.
+
+Do not mark any third-party provider as active until they approve the BuilderPerks inventory and integration terms.
+
 ## EthicalAds Response - 2026-06-12
 
 David Fischer from EthicalAds replied positively. Key points:

@@ -3,8 +3,9 @@ set -eu
 
 API_URL="${BUILDERPERKS_API_URL:-https://builderperks.netlify.app}"
 PUBLISHER_ID="${1:-}"
-KEYWORDS="${2:-${BUILDERPERKS_KEYWORDS:-typescript,react,postgres}}"
-SURFACE="${3:-${BUILDERPERKS_SURFACE:-terminal}}"
+PUBLISHER_TOKEN="${2:-${BUILDERPERKS_PUBLISHER_TOKEN:-}}"
+KEYWORDS="${3:-${BUILDERPERKS_KEYWORDS:-typescript,react,postgres}}"
+SURFACE="${4:-${BUILDERPERKS_SURFACE:-terminal}}"
 BLOCKED_KEYWORDS="${BUILDERPERKS_BLOCKED_KEYWORDS:-crypto,gambling}"
 BLOCKED_CATEGORIES="${BUILDERPERKS_BLOCKED_CATEGORIES:-adult,gambling}"
 VALUE_MODE="${BUILDERPERKS_VALUE_MODE:-relevant}"
@@ -14,7 +15,12 @@ CONFIG_FILE="$INSTALL_DIR/config.env"
 if [ -z "$PUBLISHER_ID" ]; then
   cat >&2 <<'EOF'
 Usage:
-  curl -fsSL https://builderperks.netlify.app/install-statusline.sh | bash -s -- pub_x
+  curl -fsSL https://builderperks.netlify.app/install-statusline.sh | bash -s -- pub_x bp_pub_token
+
+Inspect first:
+  curl -fsS https://builderperks.netlify.app/install-statusline.sh -o install-statusline.sh
+  less install-statusline.sh
+  bash install-statusline.sh pub_x bp_pub_token
 
 Register first at:
   https://builderperks.netlify.app/#api
@@ -33,6 +39,7 @@ shell_quote() {
 cat > "$CONFIG_FILE" <<EOF
 BUILDERPERKS_API_URL=$(shell_quote "$API_URL")
 BUILDERPERKS_PUBLISHER_ID=$(shell_quote "$PUBLISHER_ID")
+BUILDERPERKS_PUBLISHER_TOKEN=$(shell_quote "$PUBLISHER_TOKEN")
 BUILDERPERKS_SURFACE=$(shell_quote "$SURFACE")
 BUILDERPERKS_KEYWORDS=$(shell_quote "$KEYWORDS")
 BUILDERPERKS_BLOCKED_KEYWORDS=$(shell_quote "$BLOCKED_KEYWORDS")
@@ -67,5 +74,6 @@ Optional controls:
   BUILDERPERKS_BLOCKED_CATEGORIES=adult,gambling
 
 This sends only broad preference keywords and category choices you choose. It does not send prompts or personal data.
+Your publisher token is stored only in $CONFIG_FILE and is required for new publisher traffic.
 The helper stays quiet by default; BUILDERPERKS_DEBUG=1 prints setup diagnostics to stderr.
 EOF

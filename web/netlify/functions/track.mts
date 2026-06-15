@@ -1,5 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { badRequest, cleanText, id, json, readState, writeState, type Click } from "./_data.mjs";
+import { approvedPartnerFeedPlacements } from "./_partner_feeds.mjs";
 
 export default async (req: Request) => {
   if (req.method !== "GET") {
@@ -12,7 +13,8 @@ export default async (req: Request) => {
   if (!placementId) return badRequest("Placement is required");
 
   const state = await readState();
-  const placement = state.placements.find((item) => item.id === placementId && item.status === "approved");
+  const placement = state.placements.find((item) => item.id === placementId && item.status === "approved")
+    ?? (await approvedPartnerFeedPlacements()).flatMap((result) => result.placements).find((item) => item.id === placementId);
   if (!placement) return badRequest("Placement is not available");
 
   const destination = new URL(placement.url);

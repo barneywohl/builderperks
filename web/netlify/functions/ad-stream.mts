@@ -1,5 +1,7 @@
 import type { Config } from "@netlify/functions";
-import { badRequest, cleanText, id, json, readState, siteUrl, writeState, type Impression, type Placement } from "./_data.mjs";
+import { badRequest, cleanText, id, json, publisherTokenAuthorized, readState, siteUrl, writeState, type Impression, type Placement, type Publisher } from "./_data.mjs";
+import { configuredProviderNames, pendingProviderNames } from "./_providers.mjs";
+import { approvedPartnerFeedPlacements } from "./_partner_feeds.mjs";
 
 const DEFAULT_PUBLISHER_EARNINGS_USD = 0.02;
 type ValueMode = "passive" | "relevant" | "high_value";
@@ -68,6 +70,86 @@ const CATEGORY_PROFILES: Record<string, {
     providerLane: "developer_network",
     note: "Good fit when the user is instrumenting a product."
   },
+  cybersecurity: {
+    label: "Cybersecurity and compliance tooling",
+    valueTier: "premium",
+    estimatedPublisherEarningsUsd: 0.07,
+    defaultEligible: true,
+    providerLane: "developer_network",
+    note: "High-intent B2B category for security, compliance, and enterprise software workflows."
+  },
+  data: {
+    label: "Data infrastructure and BI",
+    valueTier: "premium",
+    estimatedPublisherEarningsUsd: 0.05,
+    defaultEligible: true,
+    providerLane: "developer_network",
+    note: "Strong fit for analytics, warehouse, ETL, and reporting build moments."
+  },
+  productivity: {
+    label: "Productivity and collaboration",
+    valueTier: "standard",
+    estimatedPublisherEarningsUsd: 0.03,
+    defaultEligible: true,
+    providerLane: "direct",
+    note: "Mainstream SaaS category with broad workflow relevance."
+  },
+  design: {
+    label: "Design and creative tools",
+    valueTier: "standard",
+    estimatedPublisherEarningsUsd: 0.03,
+    defaultEligible: true,
+    providerLane: "developer_network",
+    note: "Relevant for frontend, product, and content creation workflows."
+  },
+  marketing: {
+    label: "Marketing and growth software",
+    valueTier: "standard",
+    estimatedPublisherEarningsUsd: 0.04,
+    defaultEligible: true,
+    providerLane: "direct",
+    note: "Mainstream B2B SaaS category; keep copy practical and non-intrusive."
+  },
+  ecommerce: {
+    label: "Ecommerce and retail",
+    valueTier: "standard",
+    estimatedPublisherEarningsUsd: 0.04,
+    defaultEligible: true,
+    providerLane: "direct",
+    note: "Mainstream commerce category suitable for relevant builder, store, and checkout workflows."
+  },
+  education: {
+    label: "Education and learning",
+    valueTier: "standard",
+    estimatedPublisherEarningsUsd: 0.03,
+    defaultEligible: true,
+    providerLane: "direct",
+    note: "Mainstream learning category for courses, bootcamps, and technical education."
+  },
+  jobs: {
+    label: "Jobs and recruiting",
+    valueTier: "premium",
+    estimatedPublisherEarningsUsd: 0.05,
+    defaultEligible: true,
+    providerLane: "direct",
+    note: "Higher-value recruiting category; use only when role/job relevance is clear."
+  },
+  travel: {
+    label: "Travel and hospitality",
+    valueTier: "standard",
+    estimatedPublisherEarningsUsd: 0.03,
+    defaultEligible: true,
+    providerLane: "direct",
+    note: "Mainstream category for travel-app, logistics, and hospitality workflows."
+  },
+  real_estate: {
+    label: "Real estate and housing",
+    valueTier: "regulated",
+    estimatedPublisherEarningsUsd: 0.07,
+    defaultEligible: false,
+    providerLane: "regulated_partner",
+    note: "Higher-value category that requires explicit opt-in and fair-housing/policy review."
+  },
   finance: {
     label: "Finance and insurance",
     valueTier: "regulated",
@@ -93,7 +175,7 @@ const CATEGORY_PROFILES: Record<string, {
     note: "Requires explicit opt-in and health advertising policy checks."
   },
   gambling: {
-    label: "Gambling and gaming offers",
+    label: "Gambling and iGaming offers",
     valueTier: "restricted",
     estimatedPublisherEarningsUsd: 0.1,
     defaultEligible: false,
@@ -107,6 +189,30 @@ const CATEGORY_PROFILES: Record<string, {
     defaultEligible: false,
     providerLane: "restricted_partner",
     note: "Restricted inventory. Never default in developer workflows; requires explicit opt-in and separate compliance gates."
+  },
+  dating: {
+    label: "Dating and relationship offers",
+    valueTier: "restricted",
+    estimatedPublisherEarningsUsd: 0.09,
+    defaultEligible: false,
+    providerLane: "restricted_partner",
+    note: "Restricted/high-sensitivity inventory. Requires explicit opt-in, disclosure, and partner review."
+  },
+  sweepstakes: {
+    label: "Sweepstakes and lead-gen offers",
+    valueTier: "restricted",
+    estimatedPublisherEarningsUsd: 0.08,
+    defaultEligible: false,
+    providerLane: "restricted_partner",
+    note: "Performance CPA category. Requires explicit opt-in, disclosure, and quality controls."
+  },
+  gaming: {
+    label: "Gaming and game development",
+    valueTier: "standard",
+    estimatedPublisherEarningsUsd: 0.04,
+    defaultEligible: true,
+    providerLane: "direct",
+    note: "Mainstream game-development and software category; keep separate from gambling/iGaming."
   }
 };
 
@@ -119,14 +225,16 @@ function demandStatusForPlacement(placement: Placement) {
   const approvedPartnerIntegrations = placement.demandSource === "approved_partner" && placement.demandPartner
     ? [placement.demandPartner]
     : [];
+  const configuredPartnerIntegrations = configuredProviderNames().filter((partner) => !approvedPartnerIntegrations.includes(partner));
   return {
     activeSource,
     activeSourceLabel: placement.demandSource === "approved_partner" && placement.demandPartner
       ? `Approved partner: ${placement.demandPartner}`
       : "BuilderPerks seed/direct approved placements",
     approvedPartnerIntegrations,
-    pendingPartnerIntegrations: ["EthicalAds", "BuySellAds/Carbon", "AdButler", "Kevel"].filter((partner) => !approvedPartnerIntegrations.includes(partner)),
-    note: "Cold-start ads come from BuilderPerks seed or manually approved direct placements until an external demand partner approves terminal/IDE inventory."
+    configuredPartnerIntegrations,
+    pendingPartnerIntegrations: pendingProviderNames().filter((partner) => !approvedPartnerIntegrations.includes(partner)),
+    note: "Cold-start ads come from BuilderPerks seed or manually approved direct placements until an external demand partner approves terminal/IDE inventory. Configured partners remain inactive demand unless a placement is explicitly approved as approved_partner."
   };
 }
 const CATEGORY_TERMS: Record<string, string[]> = {
@@ -137,17 +245,39 @@ const CATEGORY_TERMS: Record<string, string[]> = {
   ai: ["ai", "agent", "llm", "model", "prompt", "openai", "anthropic"],
   auth: ["auth", "login", "oauth", "clerk", "supabase"],
   analytics: ["analytics", "events", "tracking", "posthog"],
+  cybersecurity: ["security", "cybersecurity", "soc2", "compliance", "vulnerability", "pentest", "sso", "audit"],
+  data: ["warehouse", "etl", "pipeline", "bigquery", "snowflake", "airflow", "bi", "dashboard"],
+  productivity: ["docs", "notion", "slack", "calendar", "email", "collaboration", "workflow"],
+  design: ["design", "figma", "prototype", "creative", "ux", "ui", "asset"],
+  marketing: ["marketing", "crm", "seo", "growth", "newsletter", "campaign", "sales"],
+  ecommerce: ["ecommerce", "shopify", "checkout", "retail", "commerce", "store", "payments"],
+  education: ["education", "course", "learning", "training", "bootcamp", "tutorial"],
+  jobs: ["jobs", "recruiting", "hiring", "talent", "candidate", "career"],
+  travel: ["travel", "hotel", "flight", "booking", "hospitality", "logistics"],
+  real_estate: ["realestate", "real-estate", "housing", "mortgage", "rental", "property"],
   finance: ["finance", "insurance", "credit", "banking", "tax", "accounting"],
   legal: ["legal", "law", "lawyer", "contract", "compliance"],
   health: ["health", "medical", "pharma", "wellness"],
   gambling: ["gambling", "casino", "betting", "poker", "wager"],
-  adult: ["adult", "dating", "xxx", "explicit", "hookup"]
+  adult: ["adult", "xxx", "explicit"],
+  dating: ["dating", "hookup", "relationship", "singles"],
+  sweepstakes: ["sweepstakes", "giveaway", "prize", "survey", "cpa"],
+  gaming: ["gaming", "game", "unity", "unreal", "gamedev", "esports"]
 };
 
+function redactSensitiveKeywordSource(value: string) {
+  return value
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, " ")
+    .replace(/\b(?:sk|pk|rk|ghp|gho|github_pat|xox[baprs]|glpat|hf)_[A-Za-z0-9_-]{12,}\b/g, " ")
+    .replace(/\b(?:sk|pk|rk)-[A-Za-z0-9_-]{12,}\b/g, " ")
+    .replace(/\b(?:api[_-]?key|token|secret|password|authorization|bearer)\b\s*[:=]\s*[^\s,;]+/gi, " ")
+    .replace(/(?:\/Users|\/home|\/Volumes|[A-Z]:\\)[^\s,;]+/g, " ");
+}
+
 function parseKeywords(value: string) {
-  return [...new Set(value
+  return [...new Set(redactSensitiveKeywordSource(value)
     .toLowerCase()
-    .split(/[^a-z0-9+#.-]+/)
+    .split(/[^a-z0-9_+#.-]+/)
     .map((term) => term.trim())
     .filter((term) => term.length > 1 && term.length <= 40))]
     .slice(0, 12);
@@ -211,12 +341,20 @@ function valueScore(categories: string[], valueMode: ValueMode) {
   }, 0);
 }
 
+function sponsoredLabelForPlacement(placement: Placement) {
+  if (placement.demandSource === "approved_partner" && placement.demandPartner) {
+    return `Sponsored via ${placement.demandPartner}`;
+  }
+  return "Sponsored";
+}
+
 function renderVariants(placement: Placement, clickUrl: string, categories: string[]) {
-  const statusLine = `Sponsored: ${placement.company} - ${placement.headline} | ${clickUrl}`;
+  const sponsoredLabel = sponsoredLabelForPlacement(placement);
+  const statusLine = `${sponsoredLabel}: ${placement.company} - ${placement.headline} | ${clickUrl}`;
   return {
     statusLine,
     terminalLine: statusLine,
-    markdown: `**Sponsored: ${placement.company}** - ${placement.headline}\\n${clickUrl}`,
+    markdown: `**${sponsoredLabel}: ${placement.company}** - ${placement.headline}\\n${clickUrl}`,
     ideCard: {
       title: placement.headline,
       subtitle: placement.company,
@@ -229,6 +367,18 @@ function renderVariants(placement: Placement, clickUrl: string, categories: stri
   };
 }
 
+function impressionCapExceeded(impressions: Impression[], publisherId: string) {
+  const now = Date.now();
+  const hourAgo = now - 60 * 60 * 1000;
+  const dayAgo = now - 24 * 60 * 60 * 1000;
+  const publisherImpressions = impressions.filter((item) => item.publisherId === publisherId);
+  const lastHour = publisherImpressions.filter((item) => Date.parse(item.createdAt) >= hourAgo).length;
+  const lastDay = publisherImpressions.filter((item) => Date.parse(item.createdAt) >= dayAgo).length;
+  if (lastHour >= 120) return "publisher_hourly_cap";
+  if (lastDay >= 1000) return "publisher_daily_cap";
+  return "";
+}
+
 export default async (req: Request) => {
   if (req.method !== "GET") {
     return json({ ok: false, error: "Method not allowed" }, { status: 405 });
@@ -236,11 +386,12 @@ export default async (req: Request) => {
 
   const url = new URL(req.url);
   const publisherId = cleanText(url.searchParams.get("publisherId"));
+  const publisherToken = cleanText(url.searchParams.get("publisherToken") ?? req.headers.get("x-publisher-token"));
   const surface = cleanText(url.searchParams.get("surface"), "terminal");
   const context = cleanText(url.searchParams.get("context"), "AI builder workflow");
   const keywords = parseKeywords(cleanText(url.searchParams.get("keywords"), ""));
   const blockedKeywords = parseKeywords(cleanText(url.searchParams.get("blockedKeywords") ?? url.searchParams.get("excludeKeywords"), ""));
-  const allowedCategories = parseKeywords(cleanText(url.searchParams.get("allowedCategories") ?? url.searchParams.get("optInCategories"), ""));
+  const requestedAllowedCategories = parseKeywords(cleanText(url.searchParams.get("allowedCategories") ?? url.searchParams.get("optInCategories"), ""));
   const blockedCategories = parseKeywords(cleanText(url.searchParams.get("blockedCategories") ?? url.searchParams.get("excludeCategories"), ""));
   const valueMode = parseValueMode(cleanText(url.searchParams.get("valueMode") ?? url.searchParams.get("attentionMode"), "passive"));
   const format = cleanText(url.searchParams.get("format"), "card");
@@ -249,14 +400,34 @@ export default async (req: Request) => {
   const state = await readState();
   const publisher = state.publishers.find((item) => item.id === publisherId && item.status === "active");
   if (!publisher) return badRequest("Publisher is not active");
+  if (!(await publisherTokenAuthorized(publisher, publisherToken))) return json({ ok: false, error: "Publisher token is required" }, { status: 401 });
+  const publisherAllowedCategories = publisher.allowedCategories ?? [];
+  const publisherBlockedCategories = publisher.blockedCategories ?? [];
+  const allowedCategories = requestedAllowedCategories.filter((category) => publisherAllowedCategories.includes(category));
+  const effectiveBlockedCategories = [...new Set([...publisherBlockedCategories, ...blockedCategories])];
 
-  const approved = state.placements.filter((placement) => placement.status === "approved");
+  const capReason = impressionCapExceeded(state.impressions, publisherId);
+  if (capReason) return json({
+    ok: true,
+    ad: null,
+    reason: capReason,
+    rateLimit: {
+      note: "Publisher impression caps protect advertisers and keep raw counters from becoming payout-grade proof."
+    }
+  });
+
+  const partnerFeedResults = await approvedPartnerFeedPlacements();
+  const partnerPlacements = partnerFeedResults.flatMap((result) => result.placements);
+  const approved = [
+    ...state.placements.filter((placement) => placement.status === "approved"),
+    ...partnerPlacements
+  ];
   if (!approved.length) return json({ ok: true, ad: null, reason: "no_approved_placements" });
 
   const eligible = approved.filter((placement) => {
     const categories = categoryHints(placement, keywords);
     return !matchesBlockedPreference(placement, blockedKeywords)
-      && !matchesBlockedCategory(categories, blockedCategories)
+      && !matchesBlockedCategory(categories, effectiveBlockedCategories)
       && matchesAllowedCategory(categories, allowedCategories);
   });
   if (!eligible.length) return json({
@@ -266,10 +437,11 @@ export default async (req: Request) => {
     preferences: {
       keywords,
       blockedKeywords,
+      requestedAllowedCategories,
       allowedCategories,
-      blockedCategories,
+      blockedCategories: effectiveBlockedCategories,
       valueMode,
-      note: "Your keywords, blockedKeywords, allowedCategories, or blockedCategories filtered out every approved placement. Relax preferences to receive an ad."
+      note: "Your keywords, blockedKeywords, allowedCategories, or blockedCategories filtered out every approved placement. Restricted category opt-ins must be enabled on the publisher record."
     }
   });
 
@@ -287,7 +459,7 @@ export default async (req: Request) => {
     placementId: placement.id,
     publisherId,
     surface,
-    context,
+    context: "[redacted: publisher context is used for matching but not stored]",
     keywords,
     estimatedPublisherEarningsUsd
   };
@@ -311,6 +483,15 @@ export default async (req: Request) => {
     demand: {
       source: demandSourceForPlacement(placement),
       partner: placement.demandPartner ?? null,
+      partnerFeed: placement.demandSource === "approved_partner" && partnerPlacements.some((item) => item.id === placement.id)
+        ? {
+            fetched: true,
+            errors: partnerFeedResults.filter((result) => result.error).map((result) => ({
+              partner: result.source.providerName,
+              error: result.error
+            }))
+          }
+        : undefined,
       ...demandStatusForPlacement(placement)
     },
     marketplace: {
@@ -322,18 +503,22 @@ export default async (req: Request) => {
     targeting: {
       keywords,
       blockedKeywords,
+      requestedAllowedCategories,
       allowedCategories,
-      blockedCategories,
+      publisherAllowedCategories,
+      blockedCategories: effectiveBlockedCategories,
       categories,
       note: "Send broad programming language, framework, project, and preference keywords only. Do not send personal data or full prompts."
     },
     preferences: {
       wanted: keywords,
       blocked: blockedKeywords,
+      requestedAllowedCategories,
       allowedCategories,
-      blockedCategories,
+      publisherAllowedCategories,
+      blockedCategories: effectiveBlockedCategories,
       valueMode,
-      note: "Publishers control ad fit with keywords, blockedKeywords, allowedCategories, blockedCategories, and valueMode. This is preference targeting, not personal profiling."
+      note: "Publishers control ad fit with keywords, blockedKeywords, blockedCategories, and valueMode. Regulated or restricted category opt-ins are account-level preferences, not caller-controlled URL flags."
     },
     render: {
       format,

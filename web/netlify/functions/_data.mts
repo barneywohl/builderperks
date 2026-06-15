@@ -67,6 +67,27 @@ export type BuilderSignup = {
   note: string;
 };
 
+export type ProofSession = {
+  id: string;
+  createdAt: string;
+  publisherId: string;
+  proofNonceHash: string;
+  proofNonceExpiresAt: string;
+  email: string;
+  name: string;
+  surface: string;
+  tool: string;
+  sawSponsoredLine: boolean;
+  installMinutes: number;
+  sentiment: "useful" | "neutral" | "annoying" | "blocked";
+  blocker: string;
+  note: string;
+  evidenceUrl: string;
+  evidenceHash: string;
+  reviewStatus: "pending_review" | "approved" | "rejected";
+  reviewedAt?: string;
+};
+
 export type Publisher = {
   id: string;
   createdAt: string;
@@ -75,6 +96,10 @@ export type Publisher = {
   surface: string;
   payoutHandle: string;
   status: "pending" | "active";
+  tokenHash?: string;
+  tokenPrefix?: string;
+  allowedCategories?: string[];
+  blockedCategories?: string[];
 };
 
 export type Click = {
@@ -103,6 +128,7 @@ type State = {
   relevanceEvents: RelevanceEvent[];
   clicks: Click[];
   builders: BuilderSignup[];
+  proofSessions: ProofSession[];
   publishers: Publisher[];
   impressions: Impression[];
 };
@@ -153,12 +179,12 @@ const initialState: State = {
   relevanceEvents: [],
   clicks: [],
   builders: [],
+  proofSessions: [],
   publishers: [],
   impressions: []
 };
 
 const storeName = "builderperks-state";
-const fallbackAdminKeyHash = "5f082a6736a145c17b3504a9558488df204e5d1d4b3e3dd2b66ce66f5020067b";
 
 export function env(name: string) {
   return Netlify.env.get(name) || process.env[name] || "";
@@ -180,6 +206,7 @@ export async function readState(): Promise<State> {
     ...initialState,
     ...(stored ?? {}),
     builders: (stored as Partial<State> | null)?.builders ?? [],
+    proofSessions: (stored as Partial<State> | null)?.proofSessions ?? [],
     publishers: (stored as Partial<State> | null)?.publishers ?? [],
     impressions: (stored as Partial<State> | null)?.impressions ?? [],
     relevanceEvents: (stored as Partial<State> | null)?.relevanceEvents ?? []
@@ -208,6 +235,59 @@ export function id(prefix: string) {
   return `${prefix}-${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 8)}`;
 }
 
+export function secretToken(prefix: string) {
+  return `${prefix}_${crypto.randomUUID().replaceAll("-", "")}${crypto.randomUUID().slice(0, 8)}`;
+}
+
+export async function sha256Hex(value: string) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function hmacSha256Hex(secret: string, value: string) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(value));
+  return [...new Uint8Array(signature)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+export async function publisherTokenAuthorized(publisher: Publisher, token: string) {
+  if (!publisher.tokenHash) return false;
+  if (!token) return false;
+  return await sha256Hex(token) === publisher.tokenHash;
+}
+
+function proofNoncePayload(publisherId: string, nonce: string, expiresAt: string) {
+  return `${publisherId}.${nonce}.${expiresAt}`;
+}
+
+export async function createProofSessionNonce(publisherId: string, publisherToken: string, ttlSeconds = 600) {
+  const nonce = secretToken("bp_proof");
+  const expiresAt = new Date(Date.now() + Math.max(60, Math.min(1800, ttlSeconds)) * 1000).toISOString();
+  const signature = await hmacSha256Hex(publisherToken, proofNoncePayload(publisherId, nonce, expiresAt));
+  return { nonce, expiresAt, signature };
+}
+
+export async function proofSessionNonceAuthorized(
+  publisherId: string,
+  publisherToken: string,
+  nonce: string,
+  expiresAt: string,
+  signature: string
+) {
+  if (!publisherId || !publisherToken || !nonce || !expiresAt || !signature) return false;
+  if (!nonce.startsWith("bp_proof_")) return false;
+  const expiresAtMs = Date.parse(expiresAt);
+  if (!Number.isFinite(expiresAtMs) || expiresAtMs <= Date.now()) return false;
+  const expected = await hmacSha256Hex(publisherToken, proofNoncePayload(publisherId, nonce, expiresAt));
+  return signature === expected;
+}
+
 export async function parseJson(req: Request) {
   try {
     return await req.json();
@@ -218,6 +298,19 @@ export async function parseJson(req: Request) {
 
 export function cleanText(value: unknown, fallback = "") {
   return String(value ?? fallback).trim().slice(0, 600);
+}
+
+export function parseKeywords(value: unknown) {
+  return cleanText(value)
+    .split(",")
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean)
+    .slice(0, 12);
+}
+
+export function cleanEmail(value: unknown) {
+  const email = cleanText(value).toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : "";
 }
 
 export function cleanUrl(value: unknown) {
@@ -239,15 +332,12 @@ export function siteUrl(req: Request) {
   return `${url.protocol}//${url.host}`;
 }
 
-async function sha256(value: string) {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
-  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
 export async function adminAuthorized(req: Request) {
   const configured = env("BUILDERPERKS_ADMIN_KEY");
-  const provided = req.headers.get("x-admin-key") || new URL(req.url).searchParams.get("key");
+  const headerKey = req.headers.get("x-admin-key");
+  const queryKey = new URL(req.url).searchParams.get("key");
+  const provided = headerKey || (!isProduction() ? queryKey : null);
   if (!configured && !isProduction()) return provided === "demo-admin";
   if (configured) return provided === configured;
-  return provided ? (await sha256(provided)) === fallbackAdminKeyHash : false;
+  return false;
 }

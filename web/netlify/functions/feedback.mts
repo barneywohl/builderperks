@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { badRequest, cleanText, id, json, parseJson, readState, writeState, type Feedback } from "./_data.mjs";
+import { badRequest, cleanEmail, cleanText, id, json, parseJson, readState, writeState, type Feedback } from "./_data.mjs";
 
 export default async (req: Request) => {
   if (req.method !== "POST") {
@@ -16,10 +16,11 @@ export default async (req: Request) => {
     createdAt: new Date().toISOString(),
     role,
     rating,
-    email: cleanText(body.email).toLowerCase(),
+    email: cleanEmail(body.email),
     message: cleanText(body.message)
   };
 
+  if (!feedback.email) return badRequest("Valid email is required");
   if (!feedback.message) return badRequest("Message is required");
 
   const state = await readState();

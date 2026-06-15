@@ -40,3 +40,27 @@ Looking for 10 AI-heavy builders and 3 devtool advertisers to test it today: htt
 - What would make you uninstall it?
 - For advertisers: would you pay $250, $750, or $2,000 to test this surface?
 - What category of offer should be banned?
+
+## Email Formatting Rule
+
+Before any Gmail/browser send, paste only plain text with real paragraph breaks.
+Do not paste JSON-escaped bodies or strings containing literal `\n\n`.
+
+If a draft came from a script, normalize it first:
+
+```bash
+python3 /Volumes/X10/clawd/ops/scripts/email_body_guard.py --file /path/to/draft.txt --in-place
+```
+
+Correct reply shape:
+
+```text
+Hi Roger,
+
+Totally fair, and that tells me the landing page needs to be clearer.
+
+BuilderPerks is for opted-in publisher surfaces like terminal/statusline, IDE, extension, or agent products to show one clearly labeled sponsored devtool card or line in context. Users can ignore or hide it; there are no incentivized clicks or fake-traffic mechanics.
+
+Thanks,
+Barney
+```

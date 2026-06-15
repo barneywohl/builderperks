@@ -3,7 +3,7 @@
   "name": "BuilderPerks",
   "version": "0.2.0",
   "description": "Shows locally matched sponsored builder offers during AI wait states.",
-  "permissions": ["storage"],
+  "permissions": ["activeTab", "storage"],
   "host_permissions": [
     "https://claude.ai/*",
     "https://chatgpt.com/*",

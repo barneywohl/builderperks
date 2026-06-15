@@ -4,6 +4,7 @@ set -u
 CONFIG_FILE="${BUILDERPERKS_CONFIG_FILE:-$HOME/.builderperks/config.env}"
 ENV_API_URL="${BUILDERPERKS_API_URL:-}"
 ENV_PUBLISHER_ID="${BUILDERPERKS_PUBLISHER_ID:-}"
+ENV_PUBLISHER_TOKEN="${BUILDERPERKS_PUBLISHER_TOKEN:-}"
 ENV_SURFACE="${BUILDERPERKS_SURFACE:-}"
 ENV_CONTEXT="${BUILDERPERKS_CONTEXT:-}"
 ENV_KEYWORDS="${BUILDERPERKS_KEYWORDS:-}"
@@ -18,6 +19,7 @@ if [ -f "$CONFIG_FILE" ]; then
   . "$CONFIG_FILE"
   CONFIG_API_URL="${BUILDERPERKS_API_URL:-}"
   CONFIG_PUBLISHER_ID="${BUILDERPERKS_PUBLISHER_ID:-}"
+  CONFIG_PUBLISHER_TOKEN="${BUILDERPERKS_PUBLISHER_TOKEN:-}"
   CONFIG_SURFACE="${BUILDERPERKS_SURFACE:-}"
   CONFIG_CONTEXT="${BUILDERPERKS_CONTEXT:-}"
   CONFIG_KEYWORDS="${BUILDERPERKS_KEYWORDS:-}"
@@ -36,6 +38,7 @@ debug() {
 
 API_URL="${ENV_API_URL:-${CONFIG_API_URL:-https://builderperks.netlify.app}}"
 PUBLISHER_ID="${ENV_PUBLISHER_ID:-${1:-${CONFIG_PUBLISHER_ID:-}}}"
+PUBLISHER_TOKEN="${ENV_PUBLISHER_TOKEN:-${2:-${CONFIG_PUBLISHER_TOKEN:-}}}"
 SURFACE="${ENV_SURFACE:-${CONFIG_SURFACE:-terminal}}"
 CONTEXT="${ENV_CONTEXT:-${CONFIG_CONTEXT:-${PWD##*/} coding workflow}}"
 KEYWORDS="${ENV_KEYWORDS:-${CONFIG_KEYWORDS:-}}"
@@ -52,13 +55,13 @@ fi
 
 debug "using publisher=$PUBLISHER_ID surface=$SURFACE api=$API_URL config=$CONFIG_FILE"
 
-python3 - "$API_URL" "$PUBLISHER_ID" "$SURFACE" "$CONTEXT" "$KEYWORDS" "$BLOCKED_KEYWORDS" "$ALLOWED_CATEGORIES" "$BLOCKED_CATEGORIES" "$VALUE_MODE" "$FORMAT" "${BUILDERPERKS_DEBUG:-0}" <<'PY'
+python3 - "$API_URL" "$PUBLISHER_ID" "$PUBLISHER_TOKEN" "$SURFACE" "$CONTEXT" "$KEYWORDS" "$BLOCKED_KEYWORDS" "$ALLOWED_CATEGORIES" "$BLOCKED_CATEGORIES" "$VALUE_MODE" "$FORMAT" "${BUILDERPERKS_DEBUG:-0}" <<'PY'
 import json
 import sys
 import urllib.parse
 import urllib.request
 
-api_url, publisher_id, surface, context, keywords, blocked_keywords, allowed_categories, blocked_categories, value_mode, output_format, debug = sys.argv[1:]
+api_url, publisher_id, publisher_token, surface, context, keywords, blocked_keywords, allowed_categories, blocked_categories, value_mode, output_format, debug = sys.argv[1:]
 params = {
     "publisherId": publisher_id,
     "surface": surface,
@@ -66,6 +69,8 @@ params = {
     "valueMode": value_mode,
     "format": output_format,
 }
+if publisher_token:
+    params["publisherToken"] = publisher_token
 if keywords:
     params["keywords"] = keywords
 if blocked_keywords:
@@ -78,10 +83,11 @@ if blocked_categories:
 url = api_url.rstrip("/") + "/api/ad-stream?" + urllib.parse.urlencode(params)
 
 try:
-    with urllib.request.urlopen(url, timeout=2) as response:
+    with urllib.request.urlopen(url, timeout=5) as response:
         data = json.load(response)
     if debug == "1":
-        print(f"builderperks: response ok={data.get('ok')} reason={data.get('reason', '')}", file=sys.stderr)
+        debug_detail = data.get("reason") or data.get("error") or data.get("message") or ""
+        print(f"builderperks: response ok={data.get('ok')} detail={debug_detail}", file=sys.stderr)
     render = data.get("render") or {}
     line = render.get("statusLine") or render.get("terminalLine") or ""
     if line:
