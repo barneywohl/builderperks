@@ -31,6 +31,7 @@ type PartnerFeedResult = {
 };
 
 const FEED_URL_ENV = "BUILDERPERKS_APPROVED_PARTNER_FEED_URLS";
+const SMARTLINK_PROVIDER_KEYS = new Set(["adsterra", "admaven", "clickadu", "propellerads", "richads"]);
 
 function splitFeedUrls(value: string) {
   return value.split(",").map((item) => item.trim()).filter(Boolean).slice(0, 8);
@@ -48,7 +49,7 @@ export function approvedPartnerFeedSources(): PartnerFeedSource[] {
       providerKey: provider.key,
       providerName: provider.name,
       url: providerFeedUrl(provider),
-      kind: provider.key === "adsterra" ? "smartlink" as const : "json_feed" as const
+      kind: SMARTLINK_PROVIDER_KEYS.has(provider.key) ? "smartlink" as const : "json_feed" as const
     }))
     .filter((source) => source.url);
 

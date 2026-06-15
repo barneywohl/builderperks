@@ -412,9 +412,18 @@ const tokenlessStream = await request(`/api/ad-stream?publisherId=${encodeURICom
 assert.equal(tokenlessStream.response.status, 401);
 assert.equal(tokenlessStream.data.ok, false);
 
+const fastApprovalSmartLinks = [
+  { envName: "BUILDERPERKS_ADSTERRA_SMARTLINK_URL", providerKey: "adsterra", providerName: "Adsterra", keyword: "adsterra" },
+  { envName: "BUILDERPERKS_ADMAVEN_SMARTLINK_URL", providerKey: "admaven", providerName: "AdMaven", keyword: "admaven" },
+  { envName: "BUILDERPERKS_CLICKADU_SKIM_URL", providerKey: "clickadu", providerName: "Clickadu", keyword: "clickadu" },
+  { envName: "BUILDERPERKS_PROPELLERADS_SMARTLINK_URL", providerKey: "propellerads", providerName: "PropellerAds", keyword: "propellerads" },
+  { envName: "BUILDERPERKS_RICHADS_DIRECT_URL", providerKey: "richads", providerName: "RichAds", keyword: "richads" }
+].filter((provider) => process.env[provider.envName]);
+const expectedApprovedPartnerCount = (process.env.BUILDERPERKS_APPROVED_PARTNER_FEED_URLS ? 1 : 0) + fastApprovalSmartLinks.length;
+
 const streamBase = `/api/ad-stream?publisherId=${encodeURIComponent(publisher.data.publisher.id)}&publisherToken=${encodeURIComponent(publisher.data.publisher.token)}`;
-const hasApprovedPartnerFixture = Boolean(process.env.BUILDERPERKS_APPROVED_PARTNER_FEED_URLS || process.env.BUILDERPERKS_ADSTERRA_SMARTLINK_URL);
-const partnerFeedFixtureBlock = hasApprovedPartnerFixture ? "&blockedKeywords=partnerfeed,adsterra" : "";
+const hasApprovedPartnerFixture = expectedApprovedPartnerCount > 0;
+const partnerFeedFixtureBlock = hasApprovedPartnerFixture ? `&blockedKeywords=partnerfeed,${fastApprovalSmartLinks.map((provider) => provider.keyword).join(",")}` : "";
 const streamed = await request(`${streamBase}&surface=terminal&context=deploying%20an%20AI%20app&keywords=typescript,react,postgres${partnerFeedFixtureBlock}&format=statusline`);
 assert.equal(streamed.response.status, 200);
 assert.equal(streamed.data.ok, true);
@@ -460,17 +469,17 @@ if (process.env.BUILDERPERKS_APPROVED_PARTNER_FEED_URLS) {
   assert.equal(partnerStream.data.impression.context, "[redacted: publisher context is used for matching but not stored]");
 }
 
-if (process.env.BUILDERPERKS_ADSTERRA_SMARTLINK_URL) {
-  const adsterraStream = await request(`${streamBase}&surface=terminal&context=adsterra%20smartlink%20developer%20tools&keywords=adsterra,smartlink,developer-tools&format=statusline`);
-  assert.equal(adsterraStream.response.status, 200);
-  assert.equal(adsterraStream.data.ok, true);
-  assert.ok(adsterraStream.data.ad);
-  assert.equal(adsterraStream.data.demand.source, "approved_partner");
-  assert.equal(adsterraStream.data.demand.activeSource, "approved_partner");
-  assert.equal(adsterraStream.data.demand.partner, "Adsterra");
-  assert.deepEqual(adsterraStream.data.demand.approvedPartnerIntegrations, ["Adsterra"]);
-  assert.match(adsterraStream.data.render.statusLine, /^Sponsored via Adsterra:/);
-  assert.equal(adsterraStream.data.impression.context, "[redacted: publisher context is used for matching but not stored]");
+for (const smartLinkProvider of fastApprovalSmartLinks) {
+  const smartLinkStream = await request(`${streamBase}&surface=terminal&context=${encodeURIComponent(`${smartLinkProvider.keyword} smartlink developer tools`)}&keywords=${encodeURIComponent(`${smartLinkProvider.keyword},smartlink,developer-tools`)}&format=statusline`);
+  assert.equal(smartLinkStream.response.status, 200);
+  assert.equal(smartLinkStream.data.ok, true);
+  assert.ok(smartLinkStream.data.ad);
+  assert.equal(smartLinkStream.data.demand.source, "approved_partner");
+  assert.equal(smartLinkStream.data.demand.activeSource, "approved_partner");
+  assert.equal(smartLinkStream.data.demand.partner, smartLinkProvider.providerName);
+  assert.ok(smartLinkStream.data.demand.approvedPartnerIntegrations.includes(smartLinkProvider.providerName));
+  assert.match(smartLinkStream.data.render.statusLine, new RegExp(`^Sponsored via ${smartLinkProvider.providerName}:`));
+  assert.equal(smartLinkStream.data.impression.context, "[redacted: publisher context is used for matching but not stored]");
 }
 
 const sanitizedKeywordStream = await request(`${streamBase}&surface=terminal&context=postgres&keywords=postgres,alice%40example.com,sk-test_builderperks_should_not_store_12345,/Users/alice/private-repo,api_key=secretvalue&blockedKeywords=smoke&format=statusline`);
@@ -497,14 +506,14 @@ assert.ok(providerStatus.data.providers.some((provider) => provider.key === "pub
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "exoclick" && provider.lane === "adult_network" && provider.canServeNow === false));
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "trafee" && provider.lane === "dating_affiliate" && provider.canServeNow === false));
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "maxbounty" && provider.lane === "performance_cpa" && provider.canServeNow === false));
-assert.ok(providerStatus.data.providers.some((provider) => provider.key === "propellerads" && provider.lane === "push_pop_network" && provider.canServeNow === false));
+assert.ok(providerStatus.data.providers.some((provider) => provider.key === "propellerads" && provider.lane === "push_pop_network" && provider.canServeNow === Boolean(process.env.BUILDERPERKS_PROPELLERADS_SMARTLINK_URL)));
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "xbet_partners" && provider.lane === "gambling_affiliate" && provider.canServeNow === false));
 assert.match(providerStatus.data.summary.note, /approval/);
 assert.equal(providerStatus.data.summary.providerActivationOwner, "Barney/operator");
 if (hasApprovedPartnerFixture) {
-  assert.equal(providerStatus.data.summary.thirdPartyCanServeNow, 1);
-  assert.equal(providerStatus.data.summary.credentialsConfigured, 1);
-  assert.equal(providerStatus.data.summary.providerApproved, 1);
+  assert.equal(providerStatus.data.summary.thirdPartyCanServeNow, expectedApprovedPartnerCount);
+  assert.equal(providerStatus.data.summary.credentialsConfigured, expectedApprovedPartnerCount);
+  assert.equal(providerStatus.data.summary.providerApproved, expectedApprovedPartnerCount);
   assert.deepEqual(providerStatus.data.summary.fastestBlockerPacket.missingCredentialEnv, []);
   if (process.env.BUILDERPERKS_APPROVED_PARTNER_FEED_URLS) {
     assert.ok(providerStatus.data.summary.approvedPartnerFeeds.some((feed) => (
@@ -513,10 +522,10 @@ if (hasApprovedPartnerFixture) {
         && feed.urlConfigured === true
     )));
   }
-  if (process.env.BUILDERPERKS_ADSTERRA_SMARTLINK_URL) {
+  for (const smartLinkProvider of fastApprovalSmartLinks) {
     assert.ok(providerStatus.data.summary.approvedPartnerFeeds.some((feed) => (
-      feed.providerKey === "adsterra"
-        && feed.providerName === "Adsterra"
+      feed.providerKey === smartLinkProvider.providerKey
+        && feed.providerName === smartLinkProvider.providerName
         && feed.urlConfigured === true
     )));
   }

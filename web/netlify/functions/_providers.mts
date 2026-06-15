@@ -608,9 +608,9 @@ const PROVIDERS: Array<Omit<ProviderStatus, "status" | "canServeNow" | "configur
   {
     key: "clickadu",
     name: "Clickadu",
-    lane: "adult_network",
-    requiredEnv: ["BUILDERPERKS_CLICKADU_ZONE_ID"],
-    note: "Broad ad-network candidate with banner, push, pop, video, and skim formats. Restricted/format-sensitive inventory only; never default AI/devtool workflow.",
+    lane: "push_pop_network",
+    requiredEnv: ["BUILDERPERKS_CLICKADU_SKIM_URL"],
+    note: "Fast/instant approval candidate with SKIM/link-style demand. Use only as disclosed sponsored click-out demand with publisher controls.",
     sourceUrl: "https://www.clickadu.com/"
   },
   {
@@ -625,9 +625,9 @@ const PROVIDERS: Array<Omit<ProviderStatus, "status" | "canServeNow" | "configur
     key: "admaven",
     name: "AdMaven",
     lane: "push_pop_network",
-    requiredEnv: ["BUILDERPERKS_ADMAVEN_API_KEY"],
-    note: "Performance ad-network candidate with publisher API tooling and push/pop-style formats. Not default for developer workflows.",
-    sourceUrl: "https://publishers-help.ad-maven.com/en/category/api-1fvhmuv/"
+    requiredEnv: ["BUILDERPERKS_ADMAVEN_SMARTLINK_URL"],
+    note: "Automatic/fast-approval smartlink candidate for broad fill. Use only as disclosed sponsored click-out demand with strict quality controls.",
+    sourceUrl: "https://ad-maven.com/"
   },
   {
     key: "crakrevenue",
@@ -689,16 +689,16 @@ const PROVIDERS: Array<Omit<ProviderStatus, "status" | "canServeNow" | "configur
     key: "richads",
     name: "RichAds",
     lane: "push_pop_network",
-    requiredEnv: ["BUILDERPERKS_RICHADS_API_KEY"],
-    note: "Push/pop/native ad-network candidate with quick-fill potential. Use only where format does not damage the developer workflow.",
+    requiredEnv: ["BUILDERPERKS_RICHADS_DIRECT_URL"],
+    note: "Push/pop/native ad-network candidate with quick-fill potential. Use only as disclosed sponsored click-out demand where format expectations match.",
     sourceUrl: "https://richads.com/"
   },
   {
     key: "propellerads",
     name: "PropellerAds",
     lane: "push_pop_network",
-    requiredEnv: ["BUILDERPERKS_PROPELLERADS_ZONE_ID"],
-    note: "Large push/pop/native ad-network candidate. Not default for AI/devtools; only opt-in inventory where format expectations match.",
+    requiredEnv: ["BUILDERPERKS_PROPELLERADS_SMARTLINK_URL"],
+    note: "Large push/pop/native ad-network candidate with fast approvals. Use only as disclosed sponsored click-out demand where format expectations match.",
     sourceUrl: "https://propellerads.com/"
   },
   {
