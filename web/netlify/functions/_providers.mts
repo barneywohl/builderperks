@@ -617,9 +617,9 @@ const PROVIDERS: Array<Omit<ProviderStatus, "status" | "canServeNow" | "configur
     key: "hilltopads",
     name: "HilltopAds",
     lane: "push_pop_network",
-    requiredEnv: ["BUILDERPERKS_HILLTOPADS_API_KEY"],
-    note: "Broad traffic monetization network with API tooling. Use only behind strict quality filters and explicit category controls.",
-    sourceUrl: "https://hilltopads.com/"
+    requiredEnv: ["BUILDERPERKS_HILLTOPADS_DIRECT_URL"],
+    note: "DirectLink-capable traffic monetization network. Use only as disclosed sponsored click-out demand behind quality filters.",
+    sourceUrl: "https://hilltopads.com/publishers-help/en/articles/10939949-how-to-create-a-directlink"
   },
   {
     key: "admaven",
@@ -633,23 +633,23 @@ const PROVIDERS: Array<Omit<ProviderStatus, "status" | "canServeNow" | "configur
     key: "crakrevenue",
     name: "CrakRevenue",
     lane: "dating_affiliate",
-    requiredEnv: ["BUILDERPERKS_CRAKREVENUE_API_KEY"],
-    note: "Dating/adult CPA affiliate lane with high payout potential. Use only as disclosed sponsored/referral offers in opted-in restricted inventory.",
-    sourceUrl: "https://www.crakrevenue.com/"
+    requiredEnv: ["BUILDERPERKS_CRAKREVENUE_SMARTLINK_URL"],
+    note: "Dating/adult CPA Smartlink lane. Use only as disclosed sponsored/referral offers in opted-in restricted inventory.",
+    sourceUrl: "https://www.crakrevenue.com/offers/dating/smartlink/"
   },
   {
     key: "cpamatica",
     name: "Cpamatica",
     lane: "dating_affiliate",
-    requiredEnv: ["BUILDERPERKS_CPAMATICA_API_KEY"],
-    note: "Dating, sweepstakes, and performance CPA lane. Treat as restricted/explicit opt-in offer backfill, not default ad demand.",
+    requiredEnv: ["BUILDERPERKS_CPAMATICA_SMARTLINK_URL"],
+    note: "Dating, social discovery, and performance CPA smartlink lane. Treat as restricted/explicit opt-in offer backfill, not default ad demand.",
     sourceUrl: "https://www.cpamatica.io/"
   },
   {
     key: "trafee",
     name: "Trafee",
     lane: "dating_affiliate",
-    requiredEnv: ["BUILDERPERKS_TRAFEE_API_KEY"],
+    requiredEnv: ["BUILDERPERKS_TRAFEE_SMARTLINK_URL"],
     note: "Smartlink/CPA affiliate lane for dating and adjacent categories. Requires disclosure and strict category gating.",
     sourceUrl: "https://trafee.com/"
   },
@@ -657,17 +657,17 @@ const PROVIDERS: Array<Omit<ProviderStatus, "status" | "canServeNow" | "configur
     key: "mobipium",
     name: "Mobipium",
     lane: "performance_cpa",
-    requiredEnv: ["BUILDERPERKS_MOBIPIUM_API_KEY"],
-    note: "Mobile/performance CPA network candidate. Useful for opt-in offer backfill, not default developer placements.",
+    requiredEnv: ["BUILDERPERKS_MOBIPIUM_SMARTLINK_URL"],
+    note: "Mobile/performance CPA smartlink candidate. Useful for opt-in offer backfill, not default developer placements.",
     sourceUrl: "https://www.mobipium.com/"
   },
   {
     key: "clickdealer",
     name: "ClickDealer",
     lane: "performance_cpa",
-    requiredEnv: ["BUILDERPERKS_CLICKDEALER_API_KEY"],
-    note: "Performance marketing network with many verticals. Use for disclosed offer backfill after advertiser/program approval.",
-    sourceUrl: "https://clickdealer.com/"
+    requiredEnv: ["BUILDERPERKS_CLICKDEALER_SMARTLINK_URL"],
+    note: "Performance marketing smartlink lane. Use for disclosed offer backfill after advertiser/program approval.",
+    sourceUrl: "https://www.clickdealer.com/smartlink/"
   },
   {
     key: "maxbounty",
@@ -681,9 +681,9 @@ const PROVIDERS: Array<Omit<ProviderStatus, "status" | "canServeNow" | "configur
     key: "zeydoo",
     name: "Zeydoo",
     lane: "performance_cpa",
-    requiredEnv: ["BUILDERPERKS_ZEYDOO_API_KEY"],
-    note: "Performance CPA network candidate for broader offer fill. Keep separate from premium developer-native demand.",
-    sourceUrl: "https://zeydoo.com/"
+    requiredEnv: ["BUILDERPERKS_ZEYDOO_SMARTLINK_URL"],
+    note: "Performance CPA smartlink candidate for broader offer fill. Keep separate from premium developer-native demand.",
+    sourceUrl: "https://zeydoo.com/blog/what-is-smartlink/"
   },
   {
     key: "richads",

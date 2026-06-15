@@ -22,6 +22,7 @@ export type PartnerFeedSource = {
   providerName: string;
   url: string;
   kind: "json_feed" | "smartlink";
+  lane?: ProviderStatus["lane"];
 };
 
 type PartnerFeedResult = {
@@ -31,7 +32,20 @@ type PartnerFeedResult = {
 };
 
 const FEED_URL_ENV = "BUILDERPERKS_APPROVED_PARTNER_FEED_URLS";
-const SMARTLINK_PROVIDER_KEYS = new Set(["adsterra", "admaven", "clickadu", "propellerads", "richads"]);
+const SMARTLINK_PROVIDER_KEYS = new Set([
+  "adsterra",
+  "admaven",
+  "clickadu",
+  "clickdealer",
+  "cpamatica",
+  "crakrevenue",
+  "hilltopads",
+  "mobipium",
+  "propellerads",
+  "richads",
+  "trafee",
+  "zeydoo"
+]);
 
 function splitFeedUrls(value: string) {
   return value.split(",").map((item) => item.trim()).filter(Boolean).slice(0, 8);
@@ -49,7 +63,8 @@ export function approvedPartnerFeedSources(): PartnerFeedSource[] {
       providerKey: provider.key,
       providerName: provider.name,
       url: providerFeedUrl(provider),
-      kind: SMARTLINK_PROVIDER_KEYS.has(provider.key) ? "smartlink" as const : "json_feed" as const
+      kind: SMARTLINK_PROVIDER_KEYS.has(provider.key) ? "smartlink" as const : "json_feed" as const,
+      lane: provider.lane
     }))
     .filter((source) => source.url);
 
@@ -121,6 +136,10 @@ function placementFromItem(source: PartnerFeedSource, item: PartnerFeedItem, ind
 function placementFromSmartLink(source: PartnerFeedSource): Placement | null {
   const url = cleanUrl(source.url);
   if (!url) return null;
+  const restrictedCategory = smartLinkRestrictedCategory(source);
+  const categoryNote = restrictedCategory
+    ? `${restrictedCategory} category sponsored click-out`
+    : "developer workflow sponsored click-out";
   return {
     id: `partner-${source.providerKey}-smartlink`,
     createdAt: "2026-06-15T00:00:00.000Z",
@@ -130,17 +149,26 @@ function placementFromSmartLink(source: PartnerFeedSource): Placement | null {
     contactName: source.providerName,
     email: "partner-feed@builderperks.local",
     headline: "Relevant sponsored offer for builders",
-    body: "Open a disclosed sponsored offer matched by the approved partner network.",
+    body: `Open a disclosed ${categoryNote} matched by the approved partner network.`,
     cta: "Open sponsored offer",
     url,
-    audience: "AI builders and developer-tool users",
+    audience: restrictedCategory ? `${restrictedCategory} opt-in publishers` : "AI builders and developer-tool users",
     packageId: "starter",
     budgetUsd: 0,
-    targetTools: ["Claude", "ChatGPT", "Cursor"],
+    targetTools: restrictedCategory ? [restrictedCategory, "opt-in", "sponsored"] : ["Claude", "ChatGPT", "Cursor"],
     paymentStatus: "paid",
     demandSource: "approved_partner",
     demandPartner: source.providerName
   };
+}
+
+function smartLinkRestrictedCategory(source: PartnerFeedSource) {
+  if (source.lane === "adult_network") return "adult";
+  if (source.lane === "dating_affiliate") return "dating";
+  if (source.lane === "gambling_affiliate") return "gambling";
+  if (source.lane === "crypto_web3_network") return "crypto";
+  if (source.lane === "performance_cpa") return "sweepstakes";
+  return "";
 }
 
 export async function approvedPartnerFeedPlacements(): Promise<PartnerFeedResult[]> {

@@ -251,7 +251,7 @@ const publisher = await request("/api/publishers", {
     email: `publisher-smoke+${smokeRunId}@example.com`,
     surface: "terminal",
     payoutHandle: `publisher-smoke+${smokeRunId}@example.com`,
-    allowedCategories: "finance,crypto"
+    allowedCategories: "finance,crypto,dating,sweepstakes"
   })
 });
 assert.equal(publisher.response.status, 201);
@@ -416,8 +416,15 @@ const fastApprovalSmartLinks = [
   { envName: "BUILDERPERKS_ADSTERRA_SMARTLINK_URL", providerKey: "adsterra", providerName: "Adsterra", keyword: "adsterra" },
   { envName: "BUILDERPERKS_ADMAVEN_SMARTLINK_URL", providerKey: "admaven", providerName: "AdMaven", keyword: "admaven" },
   { envName: "BUILDERPERKS_CLICKADU_SKIM_URL", providerKey: "clickadu", providerName: "Clickadu", keyword: "clickadu" },
+  { envName: "BUILDERPERKS_CLICKDEALER_SMARTLINK_URL", providerKey: "clickdealer", providerName: "ClickDealer", keyword: "clickdealer", allowedCategory: "sweepstakes" },
+  { envName: "BUILDERPERKS_CPAMATICA_SMARTLINK_URL", providerKey: "cpamatica", providerName: "Cpamatica", keyword: "cpamatica", allowedCategory: "dating" },
+  { envName: "BUILDERPERKS_CRAKREVENUE_SMARTLINK_URL", providerKey: "crakrevenue", providerName: "CrakRevenue", keyword: "crakrevenue", allowedCategory: "dating" },
+  { envName: "BUILDERPERKS_HILLTOPADS_DIRECT_URL", providerKey: "hilltopads", providerName: "HilltopAds", keyword: "hilltopads" },
+  { envName: "BUILDERPERKS_MOBIPIUM_SMARTLINK_URL", providerKey: "mobipium", providerName: "Mobipium", keyword: "mobipium", allowedCategory: "sweepstakes" },
   { envName: "BUILDERPERKS_PROPELLERADS_SMARTLINK_URL", providerKey: "propellerads", providerName: "PropellerAds", keyword: "propellerads" },
-  { envName: "BUILDERPERKS_RICHADS_DIRECT_URL", providerKey: "richads", providerName: "RichAds", keyword: "richads" }
+  { envName: "BUILDERPERKS_RICHADS_DIRECT_URL", providerKey: "richads", providerName: "RichAds", keyword: "richads" },
+  { envName: "BUILDERPERKS_TRAFEE_SMARTLINK_URL", providerKey: "trafee", providerName: "Trafee", keyword: "trafee", allowedCategory: "dating" },
+  { envName: "BUILDERPERKS_ZEYDOO_SMARTLINK_URL", providerKey: "zeydoo", providerName: "Zeydoo", keyword: "zeydoo", allowedCategory: "sweepstakes" }
 ].filter((provider) => process.env[provider.envName]);
 const expectedApprovedPartnerCount = (process.env.BUILDERPERKS_APPROVED_PARTNER_FEED_URLS ? 1 : 0) + fastApprovalSmartLinks.length;
 
@@ -470,7 +477,13 @@ if (process.env.BUILDERPERKS_APPROVED_PARTNER_FEED_URLS) {
 }
 
 for (const smartLinkProvider of fastApprovalSmartLinks) {
-  const smartLinkStream = await request(`${streamBase}&surface=terminal&context=${encodeURIComponent(`${smartLinkProvider.keyword} smartlink developer tools`)}&keywords=${encodeURIComponent(`${smartLinkProvider.keyword},smartlink,developer-tools`)}&format=statusline`);
+  const categoryOptIn = smartLinkProvider.allowedCategory ? `&allowedCategories=${smartLinkProvider.allowedCategory}` : "";
+  const otherFastProviderKeywords = fastApprovalSmartLinks
+    .filter((provider) => provider.providerKey !== smartLinkProvider.providerKey)
+    .map((provider) => provider.keyword)
+    .join(",");
+  const providerIsolation = otherFastProviderKeywords ? `&blockedKeywords=${encodeURIComponent(otherFastProviderKeywords)}` : "";
+  const smartLinkStream = await request(`${streamBase}&surface=terminal&context=${encodeURIComponent(`${smartLinkProvider.keyword} smartlink developer tools`)}&keywords=${encodeURIComponent(`${smartLinkProvider.keyword},smartlink,developer-tools`)}${providerIsolation}${categoryOptIn}&format=statusline`);
   assert.equal(smartLinkStream.response.status, 200);
   assert.equal(smartLinkStream.data.ok, true);
   assert.ok(smartLinkStream.data.ad);
@@ -504,7 +517,7 @@ assert.ok(providerStatus.data.providers.some((provider) => provider.key === "inf
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "outbrain" && provider.lane === "premium_native_network" && provider.canServeNow === false));
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "pubmatic" && provider.lane === "publisher_ssp" && provider.canServeNow === false));
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "exoclick" && provider.lane === "adult_network" && provider.canServeNow === false));
-assert.ok(providerStatus.data.providers.some((provider) => provider.key === "trafee" && provider.lane === "dating_affiliate" && provider.canServeNow === false));
+assert.ok(providerStatus.data.providers.some((provider) => provider.key === "trafee" && provider.lane === "dating_affiliate" && provider.canServeNow === Boolean(process.env.BUILDERPERKS_TRAFEE_SMARTLINK_URL)));
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "maxbounty" && provider.lane === "performance_cpa" && provider.canServeNow === false));
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "propellerads" && provider.lane === "push_pop_network" && provider.canServeNow === Boolean(process.env.BUILDERPERKS_PROPELLERADS_SMARTLINK_URL)));
 assert.ok(providerStatus.data.providers.some((provider) => provider.key === "xbet_partners" && provider.lane === "gambling_affiliate" && provider.canServeNow === false));
