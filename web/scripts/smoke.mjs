@@ -65,6 +65,7 @@ assert.match(html, /IDE/);
 assert.match(html, /Seamless bar/);
 assert.match(html, /mainstream, high-value, regulated, and restricted lanes/);
 assert.match(html, /gambling\/iGaming/);
+assert.match(html, /Raw impressions and estimated earnings are directional only/);
 assert.match(css, /path-router/);
 assert.match(css, /works-grid/);
 assert.match(css, /demand-status/);

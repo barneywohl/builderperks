@@ -163,16 +163,16 @@ async function loadStats() {
   const scoreboard = document.getElementById("scoreboard");
   scoreboard.innerHTML = `
     <div><strong>${escapeHtml(stats.approvedPlacements)}</strong><span>approved placements</span></div>
-    <div><strong>${escapeHtml(stats.clicks)}</strong><span>clicks</span></div>
-    <div><strong>${escapeHtml(stats.claims)}</strong><span>claims</span></div>
-    <div><strong>${escapeHtml(stats.needThis ?? 0)}</strong><span>need this</span></div>
-    <div><strong>${escapeHtml(stats.notRelevant ?? 0)}</strong><span>not relevant</span></div>
-    <div><strong>${escapeHtml(stats.hideCategory ?? 0)}</strong><span>hidden categories</span></div>
+    <div><strong>${escapeHtml(stats.clicks)}</strong><span>raw clicks</span></div>
+    <div><strong>${escapeHtml(stats.claims)}</strong><span>raw claims</span></div>
+    <div><strong>${escapeHtml(stats.needThis ?? 0)}</strong><span>raw need this</span></div>
+    <div><strong>${escapeHtml(stats.notRelevant ?? 0)}</strong><span>raw not relevant</span></div>
+    <div><strong>${escapeHtml(stats.hideCategory ?? 0)}</strong><span>raw hidden categories</span></div>
     <div><strong>${escapeHtml(stats.builderSignups ?? 0)}</strong><span>founding builders</span></div>
     <div><strong>${escapeHtml(stats.verifiedWorkflowSessions ?? 0)}</strong><span>verified workflow sessions</span></div>
     <div><strong>${escapeHtml(stats.publishers ?? 0)}</strong><span>publishers</span></div>
-    <div><strong>${escapeHtml(stats.adImpressions ?? 0)}</strong><span>ad impressions</span></div>
-    <div><strong>$${escapeHtml(Number(stats.estimatedPublisherEarningsUsd ?? 0).toFixed(2))}</strong><span>est. unpaid earnings</span></div>
+    <div><strong>${escapeHtml(stats.adImpressions ?? 0)}</strong><span>raw ad impressions</span></div>
+    <div><strong>$${escapeHtml(Number(stats.estimatedPublisherEarningsUsd ?? 0).toFixed(2))}</strong><span>raw est. unpaid earnings</span></div>
     <div><strong>${escapeHtml(stats.feedback)}</strong><span>feedback notes</span></div>
   `;
   const builderCount = document.getElementById("builder-signup-count");

@@ -1,5 +1,14 @@
 # BuilderPerks Acquisition Log
 
+## 2026-06-15 14:45 ET
+
+Authenticated outreach evidence lane connected for the hardening/build slice.
+
+- Target/source/status fields remain anchored in `docs/GROWTH_SEND_CHECKLIST_20260613.md`.
+- Public UI copy now requires every copied outreach ask to be sent only from an authenticated account and logged with target, channel, evidence path, follow-up, and next action.
+- No external email, form, social post, or community reply was sent in this build pass.
+- Next action: use an approved authenticated browser/account lane for the next send-capable pass, capture screenshot evidence for each actual send, and append the result here.
+
 ## 2026-06-15 13:20 ET
 
 Third-party serving readiness rechecked after Jake request.
